@@ -1,0 +1,318 @@
+/**case-list.wxss**/
+
+/* 顶部统计区域 */
+.stats-header {
+  display: flex;
+  background: #ffffff;
+  margin-bottom: 24rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.stats-item {
+  flex: 1;
+  padding: 32rpx 24rpx;
+  text-align: center;
+  border-right: 2rpx solid #F8F9FA;
+}
+
+.stats-item:last-child {
+  border-right: none;
+}
+
+.stats-number {
+  font-size: 48rpx;
+  font-weight: 600;
+  color: #007AFF;
+  margin-bottom: 8rpx;
+}
+
+.stats-label {
+  font-size: 28rpx;
+  color: #8E8E93;
+}
+
+/* 搜索和筛选区域 */
+.search-section {
+  background: #ffffff;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.search-bar {
+  position: relative;
+  margin-bottom: 24rpx;
+}
+
+.search-input {
+  width: 100%;
+  padding: 24rpx 64rpx 24rpx 24rpx;
+  border: 2rpx solid #E5E5E7;
+  border-radius: 12rpx;
+  font-size: 32rpx;
+  background: #F8F9FA;
+  box-sizing: border-box;
+}
+
+.search-input:focus {
+  border-color: #007AFF;
+  background: #ffffff;
+}
+
+.search-icon {
+  position: absolute;
+  right: 24rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 32rpx;
+  color: #8E8E93;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 16rpx;
+}
+
+.filter-tab {
+  flex: 1;
+  padding: 20rpx 32rpx;
+  text-align: center;
+  border: 2rpx solid #E5E5E7;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  color: #8E8E93;
+  transition: all 0.2s ease;
+}
+
+.filter-tab:active {
+  transform: scale(0.98);
+}
+
+.filter-tab.active {
+  background: #007AFF;
+  border-color: #007AFF;
+  color: #ffffff;
+}
+
+/* 病例列表区域 */
+.case-list-section {
+  margin-bottom: 120rpx;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 80rpx 32rpx;
+  background: #ffffff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+  opacity: 0.6;
+}
+
+.empty-title {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #1D1D1F;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  font-size: 28rpx;
+  color: #8E8E93;
+  line-height: 1.5;
+  margin-bottom: 48rpx;
+}
+
+/* 病例卡片 */
+.case-item {
+  margin-bottom: 24rpx;
+  transition: all 0.2s ease;
+}
+
+.case-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 32rpx 32rpx 24rpx;
+}
+
+.case-info {
+  flex: 1;
+}
+
+.case-title {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #1D1D1F;
+  margin-bottom: 12rpx;
+}
+
+.case-meta {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.case-meta text {
+  font-size: 28rpx;
+  color: #8E8E93;
+  padding: 4rpx 12rpx;
+  background: #F8F9FA;
+  border-radius: 12rpx;
+}
+
+.case-status {
+  margin-left: 16rpx;
+}
+
+.case-content {
+  padding: 0 32rpx 24rpx;
+}
+
+.case-detail-item {
+  display: flex;
+  margin-bottom: 12rpx;
+  align-items: flex-start;
+}
+
+.detail-label {
+  font-size: 28rpx;
+  color: #8E8E93;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  color: #1D1D1F;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.case-files {
+  margin-top: 16rpx;
+}
+
+.file-count {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #8E8E93;
+}
+
+.file-icon {
+  margin-right: 8rpx;
+}
+
+.case-footer {
+  padding: 24rpx 32rpx;
+  border-top: 2rpx solid #F8F9FA;
+}
+
+.case-actions {
+  display: flex;
+  gap: 16rpx;
+  justify-content: flex-end;
+}
+
+/* 小按钮样式 */
+.btn-small {
+  padding: 16rpx 24rpx !important;
+  font-size: 28rpx !important;
+  min-height: 64rpx !important;
+  border-radius: 8rpx !important;
+}
+
+.btn-danger {
+  background: #FF3B30;
+  color: #ffffff;
+}
+
+.btn-danger:active {
+  background: #D1242F;
+}
+
+/* 浮动按钮 */
+.fab {
+  position: fixed;
+  bottom: 32rpx;
+  right: 32rpx;
+  width: 112rpx;
+  height: 112rpx;
+  background: #007AFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 122, 255, 0.3);
+  z-index: 999;
+  transition: all 0.2s ease;
+}
+
+.fab:active {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.3);
+}
+
+.fab-icon {
+  font-size: 48rpx;
+  color: #ffffff;
+  font-weight: 300;
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #8E8E93;
+  margin-top: 16rpx;
+}
+
+/* 响应式调整 */
+@media (max-width: 400px) {
+  .stats-header {
+    flex-direction: column;
+  }
+  
+  .stats-item {
+    border-right: none;
+    border-bottom: 2rpx solid #F8F9FA;
+  }
+  
+  .stats-item:last-child {
+    border-bottom: none;
+  }
+  
+  .case-meta {
+    flex-wrap: wrap;
+    gap: 8rpx;
+  }
+  
+  .case-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .filter-tabs {
+    flex-direction: column;
+  }
+}

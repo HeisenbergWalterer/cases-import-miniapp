@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>肝胆胰外科病例记录表单</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="form-header">
+            <h1>肝胆胰外科病例记录表单</h1>
+            <p class="subtitle">请填写完整的病例信息</p>
+        </header>
+
+        <form id="medicalForm" class="medical-form">
+            <!-- 基本信息 -->
+            <section class="form-section">
+                <h2 class="section-title">基本信息</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="gender">性别</label>
+                        <select id="gender" name="gender" required>
+                            <option value="">请选择</option>
+                            <option value="男">男</option>
+                            <option value="女">女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">年龄</label>
+                        <input type="number" id="age" name="age" min="0" max="120" required>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 症状发现时间 -->
+            <section class="form-section">
+                <h2 class="section-title">症状信息</h2>
+                <div class="form-group">
+                    <label for="symptomDuration">发现胆囊结石/息肉/腹痛等症状出现时间</label>
+                    <div class="duration-input">
+                        <input type="number" id="symptomDuration" name="symptomDuration" min="0" required>
+                        <select id="durationUnit" name="durationUnit" required>
+                            <option value="">单位</option>
+                            <option value="天">天</option>
+                            <option value="周">周</option>
+                            <option value="月">月</option>
+                            <option value="年">年</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 合并疾病 -->
+            <section class="form-section">
+                <h2 class="section-title">合并疾病</h2>
+                <div class="checkbox-grid">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="hypertension" name="comorbidities" value="高血压">
+                        <label for="hypertension">高血压</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="diabetes" name="comorbidities" value="糖尿病">
+                        <label for="diabetes">糖尿病</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="heartDisease" name="comorbidities" value="冠心病/心梗">
+                        <label for="heartDisease">冠心病/心梗</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="stroke" name="comorbidities" value="脑梗/脑出血">
+                        <label for="stroke">脑梗/脑出血</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="bronchitis" name="comorbidities" value="慢性支气管炎">
+                        <label for="bronchitis">慢性支气管炎</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="liverFailure" name="comorbidities" value="肝功能不全">
+                        <label for="liverFailure">肝功能不全</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="kidneyFailure" name="comorbidities" value="肾功能不全">
+                        <label for="kidneyFailure">肾功能不全</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="cancer" name="comorbidities" value="恶性肿瘤病史">
+                        <label for="cancer">恶性肿瘤病史</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="immunodeficiency" name="comorbidities" value="免疫缺陷疾病">
+                        <label for="immunodeficiency">免疫缺陷疾病</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 既往病史 -->
+            <section class="form-section">
+                <h2 class="section-title">既往曾有的胆囊相关疾病、并发症史</h2>
+                <div class="checkbox-grid">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="acuteCholecystitis" name="pastHistory" value="胆囊炎急性发作病史">
+                        <label for="acuteCholecystitis">胆囊炎急性发作病史</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="jaundice" name="pastHistory" value="黄疸">
+                        <label for="jaundice">黄疸</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="bileDuctStone" name="pastHistory" value="胆总管结石">
+                        <label for="bileDuctStone">胆总管结石</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="pancreatitis" name="pastHistory" value="胰腺炎">
+                        <label for="pancreatitis">胰腺炎</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 影像学报告 -->
+            <section class="form-section">
+                <h2 class="section-title">影像学报告（B超）</h2>
+                <div class="form-group">
+                    <label for="ultrasoundFile">上传影像学报告文件</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="ultrasoundFile" name="ultrasoundFile" accept="image/*,.pdf" class="file-input">
+                        <label for="ultrasoundFile" class="file-upload-btn">
+                            <span class="upload-icon">📁</span>
+                            选择文件上传
+                        </label>
+                        <span class="file-name" id="ultrasoundFileName">未选择文件</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ultrasoundReport">详细报告</label>
+                    <textarea id="ultrasoundReport" name="ultrasoundReport" rows="8" placeholder="请输入B超检查的详细报告内容..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="ultrasoundConclusion">检查结论</label>
+                    <textarea id="ultrasoundConclusion" name="ultrasoundConclusion" rows="4" placeholder="请输入检查结论..."></textarea>
+                </div>
+            </section>
+
+            <!-- 病理报告 -->
+            <section class="form-section">
+                <h2 class="section-title">病理报告</h2>
+                <div class="form-group">
+                    <label for="pathologyFile">上传病理报告文件</label>
+                    <div class="file-upload-container">
+                        <input type="file" id="pathologyFile" name="pathologyFile" accept="image/*,.pdf" class="file-input">
+                        <label for="pathologyFile" class="file-upload-btn">
+                            <span class="upload-icon">📁</span>
+                            选择文件上传
+                        </label>
+                        <span class="file-name" id="pathologyFileName">未选择文件</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pathologyReport">病理诊断报告</label>
+                    <textarea id="pathologyReport" name="pathologyReport" rows="8" placeholder="请输入病理诊断报告内容..."></textarea>
+                </div>
+            </section>
+
+            <!-- 提交按钮 -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="clearForm()">清空表单</button>
+                <button type="submit" class="btn btn-primary">提交表单</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

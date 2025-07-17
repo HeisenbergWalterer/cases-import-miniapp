@@ -1,0 +1,190 @@
+<!--case-detail.wxml-->
+<view class="container">
+  <!-- 病例头部信息 -->
+  <view class="case-header card">
+    <view class="header-content">
+      <view class="case-title">
+        病例 #{{caseData.id ? caseData.id.slice(-6) : ''}}
+      </view>
+      <view class="case-status">
+        <text class="badge {{caseData.status === 'completed' ? 'badge-success' : 'badge-warning'}}">
+          {{caseData.status === 'completed' ? '已完成' : '草稿'}}
+        </text>
+      </view>
+    </view>
+    <view class="case-meta">
+      <view class="meta-item">
+        <text class="meta-label">创建时间：</text>
+        <text class="meta-value">{{createTimeText}}</text>
+      </view>
+      <view class="meta-item" wx:if="{{updateTimeText !== createTimeText}}">
+        <text class="meta-label">更新时间：</text>
+        <text class="meta-value">{{updateTimeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="section-card card">
+    <view class="section-header">
+      <view class="section-title">基本信息</view>
+      <view class="section-icon">👤</view>
+    </view>
+    <view class="section-content">
+      <view class="info-row">
+        <view class="info-label">性别</view>
+        <view class="info-value">{{caseData.basicInfo.gender || '未填写'}}</view>
+      </view>
+      <view class="info-row">
+        <view class="info-label">年龄</view>
+        <view class="info-value">{{caseData.basicInfo.age ? caseData.basicInfo.age + '岁' : '未填写'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 症状信息 -->
+  <view class="section-card card">
+    <view class="section-header">
+      <view class="section-title">症状信息</view>
+      <view class="section-icon">📋</view>
+    </view>
+    <view class="section-content">
+      <view class="info-row">
+        <view class="info-label">症状出现时间</view>
+        <view class="info-value">
+          {{caseData.symptoms.duration && caseData.symptoms.durationUnit ? 
+            caseData.symptoms.duration + caseData.symptoms.durationUnit : '未填写'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 合并疾病 -->
+  <view class="section-card card" wx:if="{{caseData.comorbidities.length > 0}}">
+    <view class="section-header">
+      <view class="section-title">合并疾病</view>
+      <view class="section-icon">🏥</view>
+    </view>
+    <view class="section-content">
+      <view class="tag-list">
+        <view class="tag" wx:for="{{caseData.comorbidities}}" wx:key="index">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 既往病史 -->
+  <view class="section-card card" wx:if="{{caseData.pastHistory.length > 0}}">
+    <view class="section-header">
+      <view class="section-title">既往病史</view>
+      <view class="section-icon">📜</view>
+    </view>
+    <view class="section-content">
+      <view class="tag-list">
+        <view class="tag" wx:for="{{caseData.pastHistory}}" wx:key="index">
+          {{item}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 影像学报告 -->
+  <view class="section-card card">
+    <view class="section-header">
+      <view class="section-title">影像学报告</view>
+      <view class="section-icon">🖼️</view>
+    </view>
+    <view class="section-content">
+      <!-- 报告文件 -->
+      <view class="file-section" wx:if="{{caseData.imagingReport.files.length > 0}}">
+        <view class="subsection-title">报告文件</view>
+        <view class="file-grid">
+          <view class="file-item" 
+                wx:for="{{caseData.imagingReport.files}}" wx:key="index"
+                bindtap="previewFile" data-url="{{item.path}}">
+            <view class="file-preview">
+              <image class="file-image" src="{{item.path}}" mode="aspectFill" wx:if="{{item.type === 'image'}}" />
+              <view class="file-pdf" wx:if="{{item.type === 'pdf'}}">
+                <text class="pdf-icon">📄</text>
+                <text class="pdf-text">PDF</text>
+              </view>
+            </view>
+            <view class="file-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 详细报告 -->
+      <view class="text-section" wx:if="{{caseData.imagingReport.detailReport}}">
+        <view class="subsection-title">详细报告</view>
+        <view class="text-content">{{caseData.imagingReport.detailReport}}</view>
+      </view>
+
+      <!-- 检查结论 -->
+      <view class="text-section" wx:if="{{caseData.imagingReport.conclusion}}">
+        <view class="subsection-title">检查结论</view>
+        <view class="text-content">{{caseData.imagingReport.conclusion}}</view>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty-section" wx:if="{{!caseData.imagingReport.files.length && !caseData.imagingReport.detailReport && !caseData.imagingReport.conclusion}}">
+        <text class="empty-text">暂无影像学报告</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 病理报告 -->
+  <view class="section-card card">
+    <view class="section-header">
+      <view class="section-title">病理报告</view>
+      <view class="section-icon">🔬</view>
+    </view>
+    <view class="section-content">
+      <!-- 报告文件 -->
+      <view class="file-section" wx:if="{{caseData.pathologyReport.files.length > 0}}">
+        <view class="subsection-title">报告文件</view>
+        <view class="file-grid">
+          <view class="file-item" 
+                wx:for="{{caseData.pathologyReport.files}}" wx:key="index"
+                bindtap="previewFile" data-url="{{item.path}}">
+            <view class="file-preview">
+              <image class="file-image" src="{{item.path}}" mode="aspectFill" wx:if="{{item.type === 'image'}}" />
+              <view class="file-pdf" wx:if="{{item.type === 'pdf'}}">
+                <text class="pdf-icon">📄</text>
+                <text class="pdf-text">PDF</text>
+              </view>
+            </view>
+            <view class="file-name">{{item.name}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 病理诊断 -->
+      <view class="text-section" wx:if="{{caseData.pathologyReport.diagnosis}}">
+        <view class="subsection-title">病理诊断</view>
+        <view class="text-content">{{caseData.pathologyReport.diagnosis}}</view>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty-section" wx:if="{{!caseData.pathologyReport.files.length && !caseData.pathologyReport.diagnosis}}">
+        <text class="empty-text">暂无病理报告</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="footer-actions safe-area">
+    <button class="btn btn-secondary" bindtap="editCase">编辑病例</button>
+    <button class="btn btn-primary" bindtap="shareCase">分享病例</button>
+    <button class="btn btn-danger" bindtap="deleteCase">删除病例</button>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-overlay" wx:if="{{isLoading}}">
+  <view class="loading">
+    <view class="loading-spinner"></view>
+    <view class="loading-text">加载中...</view>
+  </view>
+</view>
