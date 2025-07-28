@@ -1,62 +1,149 @@
-/**index.wxss**/
-page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.scrollarea {
-  flex: 1;
-  overflow-y: hidden;
+/* index.wxss */
+.container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #4A90E2 0%, #87CEEB 30%, #F0F8FF 60%, #FFFFFF 100%);
+  padding: 0;
+  margin: 0;
 }
 
-.userinfo {
+/* 顶部标题栏 */
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx 30rpx;
+  padding-top: 5rpx;
+  background: transparent;
+}
+
+.header-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 主要内容区域 */
+.main-content {
+  padding: 30rpx;
+  padding-top: 20rpx;
+}
+
+/* 功能区 */
+.function-section {
+  margin-bottom: 40rpx;
+}
+
+.function-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 30rpx;
+}
+
+.function-button {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #aaa;
-  width: 80%;
+  padding: 20rpx;
+  background: linear-gradient(135deg, #4A90E2, #5BA0F2);
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.3);
+  transition: all 0.3s ease;
 }
 
-.userinfo-avatar {
-  overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
+.function-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(74, 144, 226, 0.4);
 }
 
-.usermotto {
-  margin-top: 200px;
+.function-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-bottom: 16rpx;
 }
 
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
+.function-text {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  font-weight: 500;
 }
 
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
+/* 欢迎区域 */
+.welcome-section {
+  text-align: center;
+  margin-bottom: 40rpx;
+  padding: 40rpx 20rpx;
 }
 
-.nickname-wrapper {
+.welcome-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 16rpx;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.welcome-subtitle {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+}
+
+/* AI功能区域 */
+.ai-section {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  margin-bottom: 20rpx;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.ai-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16rpx;
+  padding: 30rpx;
   display: flex;
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
+  align-items: center;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-.nickname-label {
-  width: 105px;
+.ai-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
 }
 
-.nickname-input {
+.ai-icon {
+  font-size: 48rpx;
+  margin-right: 24rpx;
+}
+
+.ai-content {
   flex: 1;
+}
+
+.ai-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 8rpx;
+}
+
+.ai-desc {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.ai-arrow {
+  font-size: 32rpx;
+  color: #CCCCCC;
+  margin-left: 16rpx;
 }

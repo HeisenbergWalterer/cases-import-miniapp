@@ -1,27 +1,43 @@
 <!--index.wxml-->
-<scroll-view class="scrollarea" scroll-y type="list">
-  <view class="container">
-    <view class="userinfo">
-      <block wx:if="{{canIUseNicknameComp && !hasUserInfo}}">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-          <image class="avatar" src="{{userInfo.avatarUrl}}"></image>
-        </button>
-        <view class="nickname-wrapper">
-          <text class="nickname-label">昵称</text>
-          <input type="nickname" class="nickname-input" placeholder="请输入昵称" bind:change="onInputChange" />
+<view class="container">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-title">医疗助手</view>
+  </view>
+
+  <!-- 主要内容区域 -->
+  <view class="main-content">
+    <!-- 功能区 -->
+    <view class="function-section">
+      <view class="function-card">
+        <view class="function-button" bindtap="navigateToCaseImport">
+          <image class="function-icon" src="/images/icon/导入.png" mode="aspectFit"></image>
+          <text class="function-text">报告导入</text>
         </view>
-      </block>
-      <block wx:elif="{{!hasUserInfo}}">
-        <button wx:if="{{canIUseGetUserProfile}}" bindtap="getUserProfile"> 获取头像昵称 </button>
-        <view wx:else> 请使用2.10.4及以上版本基础库 </view>
-      </block>
-      <block wx:else>
-        <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
-        <text class="userinfo-nickname">{{userInfo.nickName}}</text>
-      </block>
+        <view class="function-button" bindtap="navigateToCaseList">
+          <image class="function-icon" src="/images/icon/病例.png" mode="aspectFit"></image>
+          <text class="function-text">我的报告</text>
+        </view>
+      </view>
     </view>
-    <view class="usermotto">
-      <text class="user-motto">{{motto}}</text>
+
+    <!-- 欢迎信息 -->
+    <view class="welcome-section">
+      <view class="welcome-title">欢迎使用医疗助手</view>
+      <view class="welcome-subtitle">为您提供便捷的病例管理服务</view>
+    </view>
+
+    <!-- AI功能区域 -->
+    <view class="ai-section">
+      <view class="section-title">智能分析中心</view>
+      <view class="ai-card" bindtap="navigateToAIAnalysis">
+        <view class="ai-icon">🤖</view>
+        <view class="ai-content">
+          <view class="ai-title">AI病情分析</view>
+          <view class="ai-desc">点击进入AI分析界面</view>
+        </view>
+        <view class="ai-arrow">></view>
+      </view>
     </view>
   </view>
-</scroll-view>
+</view>

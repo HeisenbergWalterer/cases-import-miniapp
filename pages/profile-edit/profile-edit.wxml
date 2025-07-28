@@ -1,0 +1,29 @@
+<view class="container">
+  <!-- 个人信息编辑区域 -->
+  <view class="profile-section">
+    <view class="section-title">个人信息</view>
+    <view class="form-group">
+      <view class="form-label">姓名</view>
+      <input class="form-input" value="{{userInfo.name}}" placeholder="请输入姓名" bindinput="onNameInput" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">性别</view>
+      <picker class="form-picker" range="{{genderOptions}}" value="{{genderIndex}}" bindchange="onGenderChange">
+        <view class="picker-text">{{genderOptions[genderIndex]}}</view>
+      </picker>
+    </view>
+    <view class="form-group">
+      <view class="form-label">年龄</view>
+      <input class="form-input" type="number" value="{{userInfo.age}}" placeholder="请输入年龄" bindinput="onAgeInput" />
+    </view>
+    <button class="save-btn" bindtap="saveProfile">保存信息</button>
+  </view>
+
+  <!-- 提示信息 -->
+  <view class="tip-section">
+    <view class="tip-title">💡 提示</view>
+    <view class="tip-content">
+      完善个人信息后，在导入病例时系统会自动使用您的姓名、性别、年龄信息，无需重复输入。
+    </view>
+  </view>
+</view> 

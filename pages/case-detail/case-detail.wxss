@@ -1,0 +1,133 @@
+/* 容器样式 */
+.container {
+  padding: 20rpx;
+  padding-top: 20rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* 病例头部 */
+.case-header {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.patient-info {
+  margin-bottom: 16rpx;
+}
+
+.patient-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.patient-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.detail-item {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.case-time {
+  font-size: 24rpx;
+  color: #999;
+  text-align: right;
+}
+
+/* 内容区域 */
+.section {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding-bottom: 12rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.label {
+  font-size: 26rpx;
+  color: #666;
+  font-weight: 500;
+}
+
+.value {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+/* 标签列表 */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+/* 操作按钮 */
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 0;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.action-btn.secondary {
+  background: #f8f9fa;
+  color: #666;
+  border: 2rpx solid #e9ecef;
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+} 

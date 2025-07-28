@@ -1,0 +1,80 @@
+<view class="container">
+  <!-- 病例基本信息 -->
+  <view class="case-header">
+    <view class="patient-info">
+      <view class="patient-name">{{caseData.patientName}}</view>
+      <view class="patient-details">
+        <text class="detail-item">{{caseData.gender}} | {{caseData.age}}岁</text>
+        <text class="detail-item" wx:if="{{caseData.hospitalId}}">住院号：{{caseData.hospitalId}}</text>
+        <text class="detail-item" wx:if="{{caseData.pathologyId}}">病理号：{{caseData.pathologyId}}</text>
+      </view>
+    </view>
+    <view class="case-time">{{caseData.createTime}}</view>
+  </view>
+
+  <!-- 症状信息 -->
+  <view class="section" wx:if="{{caseData.symptomDuration}}">
+    <view class="section-title">症状信息</view>
+    <view class="section-content">
+      <view class="info-row">
+        <text class="label">症状出现时间：</text>
+        <text class="value">{{caseData.symptomDuration}}{{caseData.durationUnit}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 合并疾病 -->
+  <view class="section" wx:if="{{caseData.comorbidities.length > 0}}">
+    <view class="section-title">合并疾病</view>
+    <view class="section-content">
+      <view class="tag-list">
+        <view class="tag" wx:for="{{caseData.comorbidities}}" wx:key="*this">{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 既往病史 -->
+  <view class="section" wx:if="{{caseData.pastHistory.length > 0}}">
+    <view class="section-title">既往病史</view>
+    <view class="section-content">
+      <view class="tag-list">
+        <view class="tag" wx:for="{{caseData.pastHistory}}" wx:key="*this">{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 影像学报告 -->
+  <view class="section" wx:if="{{caseData.ultrasoundReport || caseData.ultrasoundConclusion}}">
+    <view class="section-title">影像学报告（B超）</view>
+    <view class="section-content">
+      <view class="info-row" wx:if="{{caseData.ultrasoundReport}}">
+        <text class="label">详细报告：</text>
+        <text class="value">{{caseData.ultrasoundReport}}</text>
+      </view>
+      <view class="info-row" wx:if="{{caseData.ultrasoundConclusion}}">
+        <text class="label">检查结论：</text>
+        <text class="value">{{caseData.ultrasoundConclusion}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 病理报告 -->
+  <view class="section" wx:if="{{caseData.pathologyReport || caseData.immunohistochemistry}}">
+    <view class="section-title">病理报告</view>
+    <view class="section-content">
+      <view class="info-row" wx:if="{{caseData.pathologyReport}}">
+        <text class="label">病理诊断：</text>
+        <text class="value">{{caseData.pathologyReport}}</text>
+      </view>
+      <view class="info-row" wx:if="{{caseData.immunohistochemistry}}">
+        <text class="label">免疫组化：</text>
+        <text class="value">{{caseData.immunohistochemistry}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="action-btn secondary" bindtap="editCase">编辑病例</button>
+  </view>
+</view> 

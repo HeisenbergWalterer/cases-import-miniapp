@@ -1,12 +1,53 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs"
+    "pages/chat/chat",
+    "pages/profile/profile",
+    "pages/profile-edit/profile-edit",
+    "pages/case-import/case-import",
+    "pages/case-list/case-list",
+    "pages/case-detail/case-detail"
   ],
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarBackgroundColor": "#ffffff"
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "",
+    "navigationBarBackgroundColor": "#4A90E2",
+    "backgroundColor": "#4A90E2"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4A90E2",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/icon/首页.png",
+        "selectedIconPath": "images/icon/首页.png"
+      },
+      {
+        "pagePath": "pages/chat/chat",
+        "text": "🤖",
+        "iconPath": "images/icon/聊天.png",
+        "selectedIconPath": "images/icon/聊天.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "images/icon/个人中心.png",
+        "selectedIconPath": "images/icon/个人中心.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置接口的效果展示"
+    }
   },
   "style": "v2",
   "componentFramework": "glass-easel",

@@ -1,0 +1,49 @@
+<view class="container">
+  <!-- 用户信息区域 -->
+  <view class="user-section">
+    <view class="user-info" wx:if="{{hasUserInfo}}">
+      <view class="avatar-container">
+        <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      </view>
+      <view class="user-details">
+        <view class="user-name">{{userInfo.name || '未设置姓名'}}</view>
+        <view class="user-phone">{{userInfo.phone || '未绑定手机号'}}</view>
+      </view>
+    </view>
+    
+    <view class="login-section" wx:else>
+      <view class="login-icon">👤</view>
+      <view class="login-text">请先登录</view>
+      <button class="login-btn" bindtap="login">微信登录</button>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="navigateToProfileEdit" wx:if="{{hasUserInfo}}">
+      <view class="menu-icon">👤</view>
+      <view class="menu-text">个人资料</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="navigateToCaseList">
+      <view class="menu-icon">📋</view>
+      <view class="menu-text">我的病例</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="clearData">
+      <view class="menu-icon">🗑️</view>
+      <view class="menu-text">清除数据</view>
+      <view class="menu-arrow">></view>
+    </view>
+    <view class="menu-item" bindtap="about">
+      <view class="menu-icon">ℹ️</view>
+      <view class="menu-text">关于我们</view>
+      <view class="menu-arrow">></view>
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-info">
+    <text>版本 1.0.0</text>
+  </view>
+</view> 

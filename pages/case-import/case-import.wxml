@@ -1,0 +1,81 @@
+<view class="container">
+  <!-- 进度条 -->
+  <view class="progress-section">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+    <view class="progress-text">{{currentStep}}/{{totalSteps}}</view>
+  </view>
+
+  <!-- 表单内容 -->
+  <view class="form-container">
+    <!-- 第一步：症状信息 -->
+    <view class="form-step" wx:if="{{currentStep === 1}}">
+      <view class="step-title">症状信息</view>
+      <view class="form-group">
+        <view class="form-label">症状出现时间</view>
+        <view class="duration-input">
+          <input class="duration-number" type="number" value="{{formData.symptomDuration}}" placeholder="时间" bindinput="onInputChange" data-field="symptomDuration" />
+          <picker class="duration-picker" range="{{durationOptions}}" value="{{durationIndex}}" bindchange="onDurationChange">
+            <view class="picker-text">{{durationOptions[durationIndex]}}</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第二步：合并疾病 -->
+    <view class="form-step" wx:if="{{currentStep === 2}}">
+      <view class="step-title">合并疾病</view>
+      <view class="checkbox-grid">
+        <view class="checkbox-item" wx:for="{{comorbidityOptions}}" wx:key="value" bindtap="onComorbidityTap" data-value="{{item.value}}">
+          <checkbox value="{{item.value}}" checked="{{item.checked}}" />
+          <text class="checkbox-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第三步：既往病史 -->
+    <view class="form-step" wx:if="{{currentStep === 3}}">
+      <view class="step-title">既往病史</view>
+      <view class="checkbox-grid">
+        <view class="checkbox-item" wx:for="{{pastHistoryOptions}}" wx:key="value" bindtap="onPastHistoryTap" data-value="{{item.value}}">
+          <checkbox value="{{item.value}}" checked="{{item.checked}}" />
+          <text class="checkbox-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第四步：影像学报告 -->
+    <view class="form-step" wx:if="{{currentStep === 4}}">
+      <view class="step-title">影像学报告（B超）</view>
+      <view class="form-group">
+        <view class="form-label">详细报告</view>
+        <textarea class="form-textarea" value="{{formData.ultrasoundReport}}" placeholder="请输入B超检查的详细报告内容..." bindinput="onInputChange" data-field="ultrasoundReport" />
+      </view>
+      <view class="form-group">
+        <view class="form-label">检查结论</view>
+        <textarea class="form-textarea" value="{{formData.ultrasoundConclusion}}" placeholder="请输入检查结论..." bindinput="onInputChange" data-field="ultrasoundConclusion" />
+      </view>
+    </view>
+
+    <!-- 第五步：病理报告 -->
+    <view class="form-step" wx:if="{{currentStep === 5}}">
+      <view class="step-title">病理报告</view>
+      <view class="form-group">
+        <view class="form-label">病理诊断</view>
+        <textarea class="form-textarea" value="{{formData.pathologyReport}}" placeholder="请输入病理诊断结果..." bindinput="onInputChange" data-field="pathologyReport" />
+      </view>
+      <view class="form-group">
+        <view class="form-label">免疫组化</view>
+        <textarea class="form-textarea" value="{{formData.immunohistochemistry}}" placeholder="请输入免疫组化检查结果..." bindinput="onInputChange" data-field="immunohistochemistry" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 按钮区域 -->
+  <view class="button-section">
+    <button class="btn btn-secondary" wx:if="{{currentStep > 1}}" bindtap="prevStep">上一步</button>
+    <button class="btn btn-primary" wx:if="{{currentStep < totalSteps}}" bindtap="nextStep">下一步</button>
+    <button class="btn btn-primary" wx:if="{{currentStep === totalSteps}}" bindtap="submitForm">提交</button>
+  </view>
+</view> 

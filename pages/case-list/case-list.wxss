@@ -1,0 +1,187 @@
+/* 容器样式 */
+.container {
+  padding: 20rpx;
+  padding-top: 20rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* 头部样式 */
+.header {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.subtitle {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 病例列表样式 */
+.case-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.case-item {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.case-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 6rpx rgba(0, 0, 0, 0.12);
+}
+
+.case-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.case-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.case-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.case-info {
+  margin-bottom: 16rpx;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 8rpx;
+}
+
+.label {
+  font-size: 26rpx;
+  color: #666;
+  width: 120rpx;
+}
+
+.value {
+  font-size: 26rpx;
+  color: #333;
+  flex: 1;
+}
+
+.case-summary {
+  margin-bottom: 20rpx;
+}
+
+.summary-item {
+  margin-bottom: 8rpx;
+}
+
+.summary-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.summary-value {
+  font-size: 26rpx;
+  color: #333;
+}
+
+.case-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  border: none;
+  background: #f8f9fa;
+  color: #666;
+}
+
+.action-btn.delete {
+  background: #ffebee;
+  color: #f44336;
+}
+
+/* 空状态样式 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 40rpx;
+}
+
+.empty-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+/* 悬浮按钮 */
+.fab {
+  position: fixed;
+  bottom: 40rpx;
+  right: 40rpx;
+  width: 100rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 20rpx rgba(102, 126, 234, 0.4);
+  transition: all 0.3s ease;
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
+.fab-icon {
+  font-size: 40rpx;
+  color: white;
+  font-weight: 600;
+} 

@@ -1,0 +1,58 @@
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <view class="title">我的病例</view>
+    <view class="subtitle">共 {{cases.length}} 个病例</view>
+  </view>
+
+  <!-- 病例列表 -->
+  <view class="case-list" wx:if="{{cases.length > 0}}">
+    <view class="case-item" wx:for="{{cases}}" wx:key="id" bindtap="viewCaseDetail" data-id="{{item.id}}">
+      <view class="case-header">
+        <view class="case-name">{{item.patientName}}</view>
+        <view class="case-time">{{item.createTime}}</view>
+      </view>
+      <view class="case-info">
+        <view class="info-item">
+          <text class="label">性别：</text>
+          <text class="value">{{item.gender}}</text>
+        </view>
+        <view class="info-item">
+          <text class="label">年龄：</text>
+          <text class="value">{{item.age}}岁</text>
+        </view>
+        <view class="info-item">
+          <text class="label">住院号：</text>
+          <text class="value">{{item.hospitalId}}</text>
+        </view>
+      </view>
+      <view class="case-summary">
+        <view class="summary-item" wx:if="{{item.comorbidities.length > 0}}">
+          <text class="summary-label">合并疾病：</text>
+          <text class="summary-value">{{item.comorbidities.join('、')}}</text>
+        </view>
+        <view class="summary-item" wx:if="{{item.ultrasoundConclusion}}">
+          <text class="summary-label">B超结论：</text>
+          <text class="summary-value">{{item.ultrasoundConclusion}}</text>
+        </view>
+      </view>
+      <view class="case-actions">
+        <button class="action-btn" catchtap="editCase" data-id="{{item.id}}">编辑</button>
+        <button class="action-btn delete" catchtap="deleteCase" data-id="{{item.id}}">删除</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">📋</view>
+    <view class="empty-title">暂无病例</view>
+    <view class="empty-desc">您还没有导入任何病例信息</view>
+    <button class="empty-btn" bindtap="navigateToImport">立即导入</button>
+  </view>
+
+  <!-- 悬浮添加按钮 -->
+  <view class="fab" bindtap="navigateToImport" wx:if="{{cases.length > 0}}">
+    <text class="fab-icon">+</text>
+  </view>
+</view> 

@@ -1,0 +1,97 @@
+/* profile-edit.wxss */
+.container {
+  padding: 20rpx;
+  padding-top: 20rpx;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.profile-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.form-picker {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 8rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+  box-sizing: border-box;
+}
+
+.picker-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.save-btn {
+  width: 100%;
+  height: 88rpx;
+  background: #007AFF;
+  color: #fff;
+  border: none;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  margin-top: 20rpx;
+}
+
+.save-btn:active {
+  background: #0056CC;
+}
+
+.tip-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.tip-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.tip-content {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+} 
