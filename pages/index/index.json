@@ -1,4 +1,7 @@
 {
+  "navigationBarTitleText": "医疗助手",
+  "navigationBarTextStyle": "white",
+  "navigationBarBackgroundColor": "#4A90E2",
   "usingComponents": {
   }
 }

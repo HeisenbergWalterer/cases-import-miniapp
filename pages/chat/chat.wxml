@@ -1,34 +1,92 @@
-<view class="container">
-  <!-- 顶部提示 -->
-  <view class="header">
-    <view class="header-title">🤖 AI病情分析</view>
-    <view class="header-subtitle">与AI医生进行病情交流</view>
+<view class="chat-container">
+  <!-- 顶部功能栏 -->
+  <view class="top-bar">
+    <view class="left-actions">
+      <view class="action-btn" bindtap="showHistoryDialog">
+        <image class="action-icon-img" src="/images/icon/历史对话.png" mode="aspectFit"></image>
+      </view>
+      <view class="action-btn" bindtap="startNewChat">
+        <image class="action-icon-img" src="/images/icon/新对话.png" mode="aspectFit"></image>
+      </view>
+    </view>
   </view>
 
-  <!-- 主要内容 -->
-  <view class="main-content">
-    <!-- 功能开发中提示 -->
-    <view class="development-notice">
-      <view class="notice-icon">🚧</view>
-      <view class="notice-title">功能开发中</view>
-      <view class="notice-desc">AI病情分析功能正在开发中，敬请期待！</view>
+  <!-- 聊天内容区域 -->
+  <scroll-view class="chat-content" scroll-y="true" scroll-top="{{scrollTop}}" scroll-into-view="{{scrollIntoView}}">
+
+
+    <!-- 聊天消息列表 -->
+    <view class="message-list">
+      <view class="message-item" wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}">
+        <!-- AI消息 -->
+        <view class="message ai-message" wx:if="{{item.type === 'ai'}}">
+          <view class="avatar ai-avatar">
+            <image class="avatar-image" src="/images/icon/deepseek.png" mode="aspectFill"></image>
+          </view>
+          <view class="message-bubble ai-bubble">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+        </view>
+        
+        <!-- 用户消息 -->
+        <view class="message user-message" wx:else>
+          <view class="message-bubble user-bubble">
+            <text class="message-text">{{item.content}}</text>
+          </view>
+          <view class="avatar user-avatar">
+            <image class="avatar-image" src="/images/icon/用户.png" mode="aspectFill"></image>
+          </view>
+        </view>
+      </view>
     </view>
 
-    <!-- 功能预览 -->
-    <view class="preview-section">
-      <view class="preview-title">功能预览</view>
-      <view class="preview-card">
-        <view class="preview-item">
-          <view class="preview-icon">📋</view>
-          <view class="preview-text">选择病例进行分析</view>
+    <!-- 初始AI问候 -->
+    <view class="message-item" wx:if="{{messages.length === 0}}">
+      <view class="message ai-message">
+        <view class="avatar ai-avatar">
+          <image class="avatar-image" src="/images/icon/deepseek.png" mode="aspectFill"></image>
         </view>
-        <view class="preview-item">
-          <view class="preview-icon">💬</view>
-          <view class="preview-text">与AI医生对话</view>
+        <view class="message-bubble ai-bubble">
+          <text class="message-text">你好</text>
         </view>
-        <view class="preview-item">
-          <view class="preview-icon">🔍</view>
-          <view class="preview-text">获得专业建议</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部输入区域 -->
+  <view class="input-area">
+    <view class="input-wrapper">
+      <view class="input-container">
+        <input class="message-input" 
+               value="{{inputMessage}}" 
+               placeholder="请输入您的健康问题..." 
+               bindinput="onInputChange"
+               confirm-type="send"
+               bindconfirm="sendMessage"
+               adjust-position="{{true}}"
+               bindfocus="onInputFocus"
+               bindblur="onInputBlur" />
+        <view class="send-btn {{inputMessage ? '' : 'disabled'}}" bindtap="sendMessage">
+          <text class="send-text">发送</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史对话弹窗 -->
+  <view class="modal-overlay" wx:if="{{showHistoryModal}}" bindtap="hideHistoryDialog">
+    <view class="history-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">历史对话</text>
+        <view class="modal-close" bindtap="hideHistoryDialog">×</view>
+      </view>
+      <view class="history-list">
+        <view class="history-item" wx:for="{{historyChats}}" wx:key="id" bindtap="loadHistoryChat" data-id="{{item.id}}">
+          <view class="history-title">{{item.title}}</view>
+          <view class="history-time">{{item.time}}</view>
+        </view>
+        <view class="empty-history" wx:if="{{historyChats.length === 0}}">
+          <text>暂无历史对话</text>
         </view>
       </view>
     </view>

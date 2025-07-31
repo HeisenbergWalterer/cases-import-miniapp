@@ -3,18 +3,20 @@
   padding: 20rpx;
   padding-top: 20rpx;
   background-color: #f8f9fa;
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* 进度条样式 */
 .progress-section {
   background: white;
   border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  padding: 20rpx 30rpx;
+  margin-bottom: 16rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
 }
 
 .progress-bar {
@@ -43,22 +45,27 @@
   flex: 1;
   background: white;
   border-radius: 16rpx;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .step-title {
   font-size: 32rpx;
   font-weight: 600;
   color: #333;
-  margin-bottom: 30rpx;
+  margin-bottom: 24rpx;
   text-align: center;
+  flex-shrink: 0;
 }
 
 /* 表单组件样式 */
 .form-group {
-  margin-bottom: 24rpx;
+  margin-bottom: 20rpx;
+  flex-shrink: 0;
 }
 
 .form-label {
@@ -103,27 +110,39 @@
   min-height: 120rpx;
 }
 
+.form-textarea.compact {
+  min-height: 80rpx;
+  max-height: 120rpx;
+}
+
 /* 时间输入样式 */
 .duration-input {
   display: flex;
-  gap: 20rpx;
+  gap: 16rpx;
+  align-items: center;
 }
 
 .duration-number {
   flex: 1;
-  padding: 20rpx;
+  padding: 18rpx 20rpx;
   border: 2rpx solid #e9ecef;
   border-radius: 12rpx;
   font-size: 28rpx;
   background: #f8f9fa;
+  height: 80rpx;
+  box-sizing: border-box;
 }
 
 .duration-picker {
   flex: 1;
-  padding: 20rpx;
+  padding: 18rpx 20rpx;
   border: 2rpx solid #e9ecef;
   border-radius: 12rpx;
   background: #f8f9fa;
+  height: 80rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
 }
 
 /* 复选框网格 */
@@ -152,7 +171,8 @@
 .button-section {
   display: flex;
   gap: 20rpx;
-  padding: 20rpx 0;
+  padding: 16rpx 0;
+  flex-shrink: 0;
 }
 
 .btn {
@@ -177,4 +197,82 @@
 
 .btn:active {
   transform: scale(0.98);
+} 
+
+/* 照片上传样式 */
+.photo-upload-section {
+  margin-top: 16rpx;
+}
+
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.photo-item {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.photo-preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 12rpx;
+}
+
+.photo-delete {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.photo-add {
+  width: 200rpx;
+  height: 200rpx;
+  border: 2rpx dashed #e9ecef;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.photo-add:active {
+  background: #e9ecef;
+  border-color: #4A90E2;
+}
+
+.add-icon {
+  font-size: 48rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.add-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.photo-tip {
+  font-size: 22rpx;
+  color: #999;
+  text-align: center;
+  line-height: 1.4;
 } 

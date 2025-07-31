@@ -16,8 +16,10 @@ Page({
       pastHistory: [],
       ultrasoundReport: '',
       ultrasoundConclusion: '',
+      ultrasoundPhotos: [],
       pathologyReport: '',
-      immunohistochemistry: ''
+      immunohistochemistry: '',
+      pathologyPhotos: []
     },
     durationOptions: ['请选择', '天', '周', '月', '年'],
     durationIndex: 0,
@@ -79,8 +81,10 @@ Page({
         pastHistory: [],
         ultrasoundReport: '',
         ultrasoundConclusion: '',
+        ultrasoundPhotos: [],
         pathologyReport: '',
-        immunohistochemistry: ''
+        immunohistochemistry: '',
+        pathologyPhotos: []
       },
       durationIndex: 0,
       currentStep: 1,
@@ -284,6 +288,133 @@ Page({
           });
         }, 2000);
       }
+    });
+  },
+
+  // 选择影像学报告照片
+  chooseUltrasoundPhoto() {
+    const remainingCount = 6 - this.data.formData.ultrasoundPhotos.length;
+    
+    wx.chooseImage({
+      count: remainingCount,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePaths = res.tempFilePaths;
+        const currentPhotos = this.data.formData.ultrasoundPhotos;
+        const newPhotos = [...currentPhotos, ...tempFilePaths];
+        
+        this.setData({
+          'formData.ultrasoundPhotos': newPhotos
+        });
+        
+        wx.showToast({
+          title: '照片添加成功',
+          icon: 'success',
+          duration: 1500
+        });
+      },
+      fail: () => {
+        wx.showToast({
+          title: '取消选择照片',
+          icon: 'none',
+          duration: 1500
+        });
+      }
+    });
+  },
+
+  // 选择病理报告照片
+  choosePathologyPhoto() {
+    const remainingCount = 6 - this.data.formData.pathologyPhotos.length;
+    
+    wx.chooseImage({
+      count: remainingCount,
+      sizeType: ['original', 'compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePaths = res.tempFilePaths;
+        const currentPhotos = this.data.formData.pathologyPhotos;
+        const newPhotos = [...currentPhotos, ...tempFilePaths];
+        
+        this.setData({
+          'formData.pathologyPhotos': newPhotos
+        });
+        
+        wx.showToast({
+          title: '照片添加成功',
+          icon: 'success',
+          duration: 1500
+        });
+      },
+      fail: () => {
+        wx.showToast({
+          title: '取消选择照片',
+          icon: 'none',
+          duration: 1500
+        });
+      }
+    });
+  },
+
+  // 删除影像学报告照片
+  deleteUltrasoundPhoto(e) {
+    const index = e.currentTarget.dataset.index;
+    const photos = this.data.formData.ultrasoundPhotos;
+    
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这张照片吗？',
+      success: (res) => {
+        if (res.confirm) {
+          photos.splice(index, 1);
+          this.setData({
+            'formData.ultrasoundPhotos': photos
+          });
+          
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      }
+    });
+  },
+
+  // 删除病理报告照片
+  deletePathologyPhoto(e) {
+    const index = e.currentTarget.dataset.index;
+    const photos = this.data.formData.pathologyPhotos;
+    
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这张照片吗？',
+      success: (res) => {
+        if (res.confirm) {
+          photos.splice(index, 1);
+          this.setData({
+            'formData.pathologyPhotos': photos
+          });
+          
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      }
+    });
+  },
+
+  // 预览照片
+  previewPhoto(e) {
+    const current = e.currentTarget.dataset.current;
+    const urls = e.currentTarget.dataset.urls;
+    
+    wx.previewImage({
+      current: current,
+      urls: urls
     });
   }
 }); 

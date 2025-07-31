@@ -52,17 +52,19 @@ Page({
     });
   },
 
-  // 导航到AI病情分析页面
-  navigateToAIAnalysis() {
-    wx.switchTab({
-      url: '/pages/chat/chat'
-    });
-  },
+
 
   // 导航到病例列表页面
   navigateToCaseList() {
     wx.navigateTo({
       url: '/pages/case-list/case-list'
+    });
+  },
+
+  // 导航到AI聊天页面
+  navigateToChat() {
+    wx.navigateTo({
+      url: '/pages/chat/chat'
     });
   }
 });

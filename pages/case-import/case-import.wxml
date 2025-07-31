@@ -48,6 +48,25 @@
     <!-- 第四步：影像学报告 -->
     <view class="form-step" wx:if="{{currentStep === 4}}">
       <view class="step-title">影像学报告（B超）</view>
+      
+      <!-- 照片导入功能 -->
+      <view class="form-group">
+        <view class="form-label">导入报告照片</view>
+        <view class="photo-upload-section">
+          <view class="photo-grid">
+            <view class="photo-item" wx:for="{{formData.ultrasoundPhotos}}" wx:key="index">
+              <image class="photo-preview" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-current="{{item}}" data-urls="{{formData.ultrasoundPhotos}}" />
+              <view class="photo-delete" bindtap="deleteUltrasoundPhoto" data-index="{{index}}">×</view>
+            </view>
+            <view class="photo-add" wx:if="{{formData.ultrasoundPhotos.length < 6}}" bindtap="chooseUltrasoundPhoto">
+              <text class="add-icon">+</text>
+              <text class="add-text">添加照片</text>
+            </view>
+          </view>
+          <view class="photo-tip">最多可上传6张照片，支持JPG、PNG格式</view>
+        </view>
+      </view>
+
       <view class="form-group">
         <view class="form-label">详细报告</view>
         <textarea class="form-textarea" value="{{formData.ultrasoundReport}}" placeholder="请输入B超检查的详细报告内容..." bindinput="onInputChange" data-field="ultrasoundReport" />
@@ -61,6 +80,25 @@
     <!-- 第五步：病理报告 -->
     <view class="form-step" wx:if="{{currentStep === 5}}">
       <view class="step-title">病理报告</view>
+      
+      <!-- 照片导入功能 -->
+      <view class="form-group">
+        <view class="form-label">导入报告照片</view>
+        <view class="photo-upload-section">
+          <view class="photo-grid">
+            <view class="photo-item" wx:for="{{formData.pathologyPhotos}}" wx:key="index">
+              <image class="photo-preview" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-current="{{item}}" data-urls="{{formData.pathologyPhotos}}" />
+              <view class="photo-delete" bindtap="deletePathologyPhoto" data-index="{{index}}">×</view>
+            </view>
+            <view class="photo-add" wx:if="{{formData.pathologyPhotos.length < 6}}" bindtap="choosePathologyPhoto">
+              <text class="add-icon">+</text>
+              <text class="add-text">添加照片</text>
+            </view>
+          </view>
+          <view class="photo-tip">最多可上传6张照片，支持JPG、PNG格式</view>
+        </view>
+      </view>
+
       <view class="form-group">
         <view class="form-label">病理诊断</view>
         <textarea class="form-textarea" value="{{formData.pathologyReport}}" placeholder="请输入病理诊断结果..." bindinput="onInputChange" data-field="pathologyReport" />

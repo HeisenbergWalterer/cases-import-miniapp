@@ -1,3 +1,5 @@
 {
-  "navigationBarTitleText": "AI病情分析"
+  "navigationBarTitleText": "AI医疗助手",
+  "navigationBarBackgroundColor": "#FFFFFF",
+  "navigationBarTextStyle": "black"
 } 
