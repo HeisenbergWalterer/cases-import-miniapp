@@ -15,10 +15,8 @@ Page({
       comorbidities: [],
       pastHistory: [],
       ultrasoundReport: '',
-      ultrasoundConclusion: '',
       ultrasoundPhotos: [],
       pathologyReport: '',
-      immunohistochemistry: '',
       pathologyPhotos: []
     },
     durationOptions: ['请选择', '天', '周', '月', '年'],
@@ -80,10 +78,8 @@ Page({
         comorbidities: [],
         pastHistory: [],
         ultrasoundReport: '',
-        ultrasoundConclusion: '',
         ultrasoundPhotos: [],
         pathologyReport: '',
-        immunohistochemistry: '',
         pathologyPhotos: []
       },
       durationIndex: 0,
@@ -96,8 +92,62 @@ Page({
   onInputChange(e) {
     const field = e.currentTarget.dataset.field;
     const value = e.detail.value;
+    
+    // 更新数据
     this.setData({
       [`formData.${field}`]: value
+    });
+    
+    // 如果是报告内容字段，触发自适应调整
+    if (field === 'ultrasoundReport' || field === 'pathologyReport') {
+      this.adjustTextareaHeight(e);
+    }
+  },
+
+  // 调整文本框高度
+  adjustTextareaHeight(e) {
+    const query = wx.createSelectorQuery();
+    query.select(`textarea[data-field="${e.currentTarget.dataset.field}"]`).boundingClientRect();
+    query.exec((res) => {
+      if (res[0]) {
+        // 计算内容高度并调整
+        const contentHeight = this.calculateContentHeight(e.detail.value);
+        const minHeight = 160; // 最小高度
+        const maxHeight = 800; // 最大高度
+        const targetHeight = Math.max(minHeight, Math.min(contentHeight, maxHeight));
+        
+        // 这里可以通过CSS变量或其他方式调整高度
+        // 由于微信小程序的限制，主要通过auto-height属性实现
+      }
+    });
+  },
+
+  // 计算内容高度
+  calculateContentHeight(text) {
+    if (!text) return 160;
+    
+    // 简单的行数计算
+    const lines = text.split('\n').length;
+    const charsPerLine = 20; // 估算每行字符数
+    const estimatedLines = Math.ceil(text.length / charsPerLine);
+    const totalLines = Math.max(lines, estimatedLines);
+    
+    // 每行高度约40rpx
+    return totalLines * 40 + 80; // 基础高度80rpx
+  },
+
+  // 触发文本框高度调整
+  triggerTextareaResize(field) {
+    // 使用nextTick确保DOM更新完成后再调整
+    wx.nextTick(() => {
+      const query = wx.createSelectorQuery();
+      query.select(`textarea[data-field="${field}"]`).boundingClientRect();
+      query.exec((res) => {
+        if (res[0]) {
+          // 文本框会自动根据auto-height属性调整高度
+          console.log(`${field} 文本框高度已调整`);
+        }
+      });
     });
   },
 
@@ -313,6 +363,11 @@ Page({
           icon: 'success',
           duration: 1500
         });
+
+        // 对新添加的照片进行OCR文字识别
+        tempFilePaths.forEach((filePath, index) => {
+          this.performOCR(filePath, 'ultrasound');
+        });
       },
       fail: () => {
         wx.showToast({
@@ -345,6 +400,11 @@ Page({
           title: '照片添加成功',
           icon: 'success',
           duration: 1500
+        });
+
+        // 对新添加的照片进行OCR文字识别
+        tempFilePaths.forEach((filePath, index) => {
+          this.performOCR(filePath, 'pathology');
         });
       },
       fail: () => {
@@ -415,6 +475,125 @@ Page({
     wx.previewImage({
       current: current,
       urls: urls
+    });
+  },
+
+  // OCR文字识别功能
+  performOCR(imagePath, type) {
+    // 显示加载提示
+    wx.showLoading({
+      title: '正在识别文字...',
+      mask: true
+    });
+
+    // 上传图片到OCR服务
+    wx.uploadFile({
+      url: 'http://10.91.11.250:5000/ocr', // OCR API服务地址
+      filePath: imagePath,
+      name: 'file',
+      success: (res) => {
+        wx.hideLoading();
+        
+        console.log('OCR原始响应:', res);
+        console.log('OCR响应数据:', res.data);
+        console.log('OCR状态码:', res.statusCode);
+        
+        try {
+          // 检查HTTP状态码
+          if (res.statusCode !== 200) {
+            throw new Error(`HTTP错误: ${res.statusCode}`);
+          }
+          
+          const result = JSON.parse(res.data);
+          console.log('OCR解析结果:', result);
+          
+          if (result && result.success) {
+            if (result.document_text) {
+              const extractedText = result.document_text;
+              console.log('OCR识别文字:', extractedText);
+              
+                          // 根据类型填充到对应的文本框
+            if (type === 'ultrasound') {
+              // 追加到影像学报告内容
+              const currentText = this.data.formData.ultrasoundReport;
+              const newText = currentText ? `${currentText}\n\n${extractedText}` : extractedText;
+              this.setData({
+                'formData.ultrasoundReport': newText
+              }, () => {
+                // 触发文本框高度调整
+                this.triggerTextareaResize('ultrasoundReport');
+              });
+            } else if (type === 'pathology') {
+              // 追加到病理报告内容
+              const currentText = this.data.formData.pathologyReport;
+              const newText = currentText ? `${currentText}\n\n${extractedText}` : extractedText;
+              this.setData({
+                'formData.pathologyReport': newText
+              }, () => {
+                // 触发文本框高度调整
+                this.triggerTextareaResize('pathologyReport');
+              });
+            }
+              
+              wx.showToast({
+                title: '文字识别成功',
+                icon: 'success',
+                duration: 2000
+              });
+            } else {
+              console.warn('OCR识别结果为空');
+              wx.showToast({
+                title: '图片中未检测到文字',
+                icon: 'none',
+                duration: 3000
+              });
+            }
+          } else {
+            console.error('OCR服务返回失败:', result);
+            wx.showToast({
+              title: result.error || 'OCR服务处理失败',
+              icon: 'none',
+              duration: 3000
+            });
+          }
+        } catch (error) {
+          console.error('OCR解析错误:', error);
+          console.error('原始数据:', res.data);
+          wx.showToast({
+            title: `解析错误: ${error.message}`,
+            icon: 'none',
+            duration: 3000
+          });
+        }
+      },
+      fail: (error) => {
+        wx.hideLoading();
+        console.error('OCR请求失败:', error);
+        console.error('错误详情:', {
+          errMsg: error.errMsg,
+          statusCode: error.statusCode,
+          errno: error.errno
+        });
+        
+        let errorMsg = 'OCR服务连接失败';
+        if (error.errMsg) {
+          if (error.errMsg.includes('timeout')) {
+            errorMsg = '请求超时，请检查网络连接';
+          } else if (error.errMsg.includes('ERR_CONNECTION_RESET')) {
+            errorMsg = '连接被重置，请检查服务器状态';
+          } else if (error.errMsg.includes('fail')) {
+            errorMsg = '无法连接到OCR服务器';
+          }
+        }
+        
+        // 显示详细错误信息
+        wx.showModal({
+          title: 'OCR连接失败',
+          content: `错误代码: ${error.errno}\n错误信息: ${error.errMsg}\n\n请检查:\n1. 服务器是否运行\n2. 网络连接是否正常\n3. 防火墙是否开放5000端口`,
+          showCancel: false,
+          confirmText: '知道了'
+        });
+      }
     });
   }
 }); 

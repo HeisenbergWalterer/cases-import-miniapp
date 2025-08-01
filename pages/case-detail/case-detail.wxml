@@ -44,31 +44,23 @@
   </view>
 
   <!-- 影像学报告 -->
-  <view class="section" wx:if="{{caseData.ultrasoundReport || caseData.ultrasoundConclusion}}">
+  <view class="section" wx:if="{{caseData.ultrasoundReport}}">
     <view class="section-title">影像学报告（B超）</view>
     <view class="section-content">
       <view class="info-row" wx:if="{{caseData.ultrasoundReport}}">
-        <text class="label">详细报告：</text>
+        <text class="label">报告内容：</text>
         <text class="value">{{caseData.ultrasoundReport}}</text>
-      </view>
-      <view class="info-row" wx:if="{{caseData.ultrasoundConclusion}}">
-        <text class="label">检查结论：</text>
-        <text class="value">{{caseData.ultrasoundConclusion}}</text>
       </view>
     </view>
   </view>
 
   <!-- 病理报告 -->
-  <view class="section" wx:if="{{caseData.pathologyReport || caseData.immunohistochemistry}}">
+  <view class="section" wx:if="{{caseData.pathologyReport}}">
     <view class="section-title">病理报告</view>
     <view class="section-content">
       <view class="info-row" wx:if="{{caseData.pathologyReport}}">
-        <text class="label">病理诊断：</text>
+        <text class="label">报告内容：</text>
         <text class="value">{{caseData.pathologyReport}}</text>
-      </view>
-      <view class="info-row" wx:if="{{caseData.immunohistochemistry}}">
-        <text class="label">免疫组化：</text>
-        <text class="value">{{caseData.immunohistochemistry}}</text>
       </view>
     </view>
   </view>

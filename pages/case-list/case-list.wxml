@@ -34,10 +34,7 @@
           <text class="summary-label">合并疾病：</text>
           <text class="summary-value">{{item.comorbidities.join('、')}}</text>
         </view>
-        <view class="summary-item" wx:if="{{item.ultrasoundConclusion}}">
-          <text class="summary-label">B超结论：</text>
-          <text class="summary-value">{{item.ultrasoundConclusion}}</text>
-        </view>
+
       </view>
       <view class="case-actions">
         <button class="action-btn" catchtap="editCase" data-id="{{item.id}}">编辑</button>

@@ -68,12 +68,14 @@
       </view>
 
       <view class="form-group">
-        <view class="form-label">详细报告</view>
-        <textarea class="form-textarea" value="{{formData.ultrasoundReport}}" placeholder="请输入B超检查的详细报告内容..." bindinput="onInputChange" data-field="ultrasoundReport" />
-      </view>
-      <view class="form-group">
-        <view class="form-label">检查结论</view>
-        <textarea class="form-textarea" value="{{formData.ultrasoundConclusion}}" placeholder="请输入检查结论..." bindinput="onInputChange" data-field="ultrasoundConclusion" />
+        <view class="form-label">报告内容</view>
+        <textarea class="form-textarea report-content" 
+                  value="{{formData.ultrasoundReport}}" 
+                  placeholder="请输入影像学报告内容..." 
+                  bindinput="onInputChange" 
+                  data-field="ultrasoundReport"
+                  auto-height="{{true}}"
+                  maxlength="-1" />
       </view>
     </view>
 
@@ -100,12 +102,14 @@
       </view>
 
       <view class="form-group">
-        <view class="form-label">病理诊断</view>
-        <textarea class="form-textarea" value="{{formData.pathologyReport}}" placeholder="请输入病理诊断结果..." bindinput="onInputChange" data-field="pathologyReport" />
-      </view>
-      <view class="form-group">
-        <view class="form-label">免疫组化</view>
-        <textarea class="form-textarea" value="{{formData.immunohistochemistry}}" placeholder="请输入免疫组化检查结果..." bindinput="onInputChange" data-field="immunohistochemistry" />
+        <view class="form-label">报告内容</view>
+        <textarea class="form-textarea report-content" 
+                  value="{{formData.pathologyReport}}" 
+                  placeholder="请输入病理报告内容..." 
+                  bindinput="onInputChange" 
+                  data-field="pathologyReport"
+                  auto-height="{{true}}"
+                  maxlength="-1" />
       </view>
     </view>
   </view>
