@@ -14,36 +14,58 @@ Page({
 
   // 加载病例数据
   loadCases() {
-    try {
-      const cases = wx.getStorageSync('medicalCases') || [];
-      
-      // 过滤掉无效的病例数据
-      const validCases = cases.filter(caseItem => 
-        caseItem && 
-        caseItem.id && 
-        caseItem.patientName && 
-        caseItem.createTime
-      );
-      
-      // 按创建时间倒序排列
-      validCases.sort((a, b) => new Date(b.createTime) - new Date(a.createTime));
-      
-      // 格式化时间显示
-      const formattedCases = validCases.map(caseItem => ({
-        ...caseItem,
-        createTime: this.formatTime(caseItem.createTime)
-      }));
-
-      this.setData({
-        cases: formattedCases
-      });
-    } catch (error) {
-      console.error('加载病例数据失败:', error);
+    const token = wx.getStorageSync('token');
+    if (!token) {
       wx.showToast({
-        title: '加载数据失败',
+        title: '请先登录',
         icon: 'error'
       });
+      return;
     }
+
+    wx.showLoading({
+      title: '加载中...'
+    });
+
+    const baseUrl = getApp().globalData.baseUrl;
+    wx.request({
+      url: `${baseUrl}/cases`,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.success) {
+          // 格式化时间显示
+          const formattedCases = res.data.cases.map(caseItem => ({
+            ...caseItem,
+            createTime: this.formatTime(caseItem.created_at)
+          }));
+
+          this.setData({
+            cases: formattedCases
+          });
+        } else {
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('加载病例数据失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
+      },
+      complete: () => {
+        // 确保hideLoading被调用
+        wx.hideLoading();
+      }
+    });
   },
 
   // 格式化时间
@@ -122,24 +144,55 @@ Page({
 
   // 根据ID删除病例
   deleteCaseById(caseId) {
-    try {
-      let cases = wx.getStorageSync('medicalCases') || [];
-      cases = cases.filter(caseItem => caseItem.id !== caseId);
-      wx.setStorageSync('medicalCases', cases);
-      
-      this.loadCases();
-      
+    const token = wx.getStorageSync('token');
+    if (!token) {
       wx.showToast({
-        title: '删除成功',
-        icon: 'success'
-      });
-    } catch (error) {
-      console.error('删除病例失败:', error);
-      wx.showToast({
-        title: '删除失败',
+        title: '请先登录',
         icon: 'error'
       });
+      return;
     }
+
+    wx.showLoading({
+      title: '删除中...'
+    });
+
+    const baseUrl = getApp().globalData.baseUrl;
+    wx.request({
+      url: `${baseUrl}/cases/${caseId}`,
+      method: 'DELETE',
+      header: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.success) {
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success'
+          });
+          // 重新加载病例列表
+          this.loadCases();
+        } else {
+          wx.showToast({
+            title: res.data.message || '删除失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('删除病例失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
+      },
+      complete: () => {
+        // 确保hideLoading被调用
+        wx.hideLoading();
+      }
+    });
   },
 
   // 导航到导入页面

@@ -310,33 +310,67 @@ Page({
       return;
     }
 
+    wx.showLoading({
+      title: '保存中...'
+    });
+
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.hideLoading();
+      wx.showToast({
+        title: '请先登录',
+        icon: 'error'
+      });
+      return;
+    }
+
     // 构建完整的病例数据
     const caseData = {
       ...this.data.formData,
       // 确保基本信息来自用户个人信息
       patientName: userInfo.name,
       gender: userInfo.gender,
-      age: userInfo.age,
-      id: Date.now().toString(),
-      createTime: new Date().toISOString(),
-      updateTime: new Date().toISOString()
+      age: userInfo.age
     };
 
-    // 保存到本地存储
-    const cases = wx.getStorageSync('medicalCases') || [];
-    cases.push(caseData);
-    wx.setStorageSync('medicalCases', cases);
-
-    wx.showToast({
-      title: '病例导入成功',
-      icon: 'success',
-      duration: 2000,
-      success: () => {
-        setTimeout(() => {
-          wx.navigateTo({
-            url: '/pages/case-list/case-list'
+    const baseUrl = getApp().globalData.baseUrl;
+    wx.request({
+      url: `${baseUrl}/cases`,
+      method: 'POST',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      data: caseData,
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.success) {
+          wx.showToast({
+            title: '病例导入成功',
+            icon: 'success',
+            duration: 2000,
+            success: () => {
+              setTimeout(() => {
+                wx.navigateTo({
+                  url: '/pages/case-list/case-list'
+                });
+              }, 2000);
+            }
           });
-        }, 2000);
+        } else {
+          wx.showToast({
+            title: res.data.message || '保存失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('保存失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
       }
     });
   },

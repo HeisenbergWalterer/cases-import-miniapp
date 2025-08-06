@@ -41,42 +41,94 @@ Page({
       title: '登录中...'
     });
 
-    // 获取用户信息
+    // 直接获取用户信息（必须在用户点击时调用）
     wx.getUserProfile({
       desc: '用于完善用户资料',
-      success: (res) => {
-        // 创建用户信息对象，不获取手机号
-        const userInfo = {
-          ...res.userInfo,
-          phone: '微信用户', // 默认手机号显示
-          name: '', // 重置姓名，让用户手动填写
-          gender: '', // 重置性别，让用户手动选择
-          age: '' // 重置年龄，让用户手动填写
-        };
-        
-        wx.setStorageSync('userInfo', userInfo);
-        this.setData({
-          userInfo: userInfo,
-          hasUserInfo: true
-        });
-        
-        wx.hideLoading();
-        wx.showToast({
-          title: '登录成功，请完善个人信息',
-          icon: 'success',
-          duration: 2000
+      success: (userRes) => {
+        // 获取用户信息成功后，再获取登录code
+        wx.login({
+          success: (loginRes) => {
+            if (loginRes.code) {
+              // 调用后端API进行登录
+              this.callLoginAPI(loginRes.code, userRes.userInfo);
+            } else {
+              wx.hideLoading();
+              wx.showToast({
+                title: '微信登录失败',
+                icon: 'error'
+              });
+            }
+          },
+          fail: (err) => {
+            console.error('微信登录失败:', err);
+            wx.hideLoading();
+            wx.showToast({
+              title: '微信登录失败',
+              icon: 'error'
+            });
+          }
         });
       },
       fail: (err) => {
-        console.error('登录失败:', err);
+        console.error('获取用户信息失败:', err);
         wx.hideLoading();
         wx.showToast({
-          title: '登录失败',
+          title: '获取用户信息失败',
           icon: 'error'
         });
       }
     });
   },
+
+  // 调用登录API
+  callLoginAPI(loginCode, userInfo) {
+    const baseUrl = getApp().globalData.baseUrl;
+    wx.request({
+      url: `${baseUrl}/user/login`,
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        code: loginCode,
+        userInfo: userInfo
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.success) {
+          // 保存token和用户信息
+          wx.setStorageSync('token', res.data.token);
+          wx.setStorageSync('userInfo', res.data.userInfo);
+          
+          this.setData({
+            userInfo: res.data.userInfo,
+            hasUserInfo: true
+          });
+          
+          wx.showToast({
+            title: '登录成功',
+            icon: 'success',
+            duration: 2000
+          });
+        } else {
+          wx.showToast({
+            title: res.data.message || '登录失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('登录失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
+      }
+    });
+  },
+
+
 
   // 导航到个人资料编辑页面
   navigateToProfileEdit() {

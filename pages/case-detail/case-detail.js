@@ -22,35 +22,64 @@ Page({
 
   // 加载病例详情
   loadCaseDetail(caseId) {
-    try {
-      const cases = wx.getStorageSync('medicalCases') || [];
-      const caseData = cases.find(caseItem => caseItem.id === caseId);
-      
-      if (caseData) {
-        // 格式化时间显示
-        caseData.createTime = this.formatTime(caseData.createTime);
-        this.setData({
-          caseData: caseData
-        });
-      } else {
-        wx.showToast({
-          title: '病例不存在',
-          icon: 'error'
-        });
-        setTimeout(() => {
-          wx.navigateBack();
-        }, 1500);
-      }
-    } catch (error) {
-      console.error('加载病例详情失败:', error);
+    const token = wx.getStorageSync('token');
+    if (!token) {
       wx.showToast({
-        title: '加载失败',
+        title: '请先登录',
         icon: 'error'
       });
       setTimeout(() => {
         wx.navigateBack();
       }, 1500);
+      return;
     }
+
+    wx.showLoading({
+      title: '加载中...'
+    });
+
+    const baseUrl = getApp().globalData.baseUrl;
+    wx.request({
+      url: `${baseUrl}/cases/${caseId}`,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.success) {
+          const caseData = res.data.caseData;
+          // 格式化时间显示
+          caseData.createTime = this.formatTime(caseData.created_at);
+          this.setData({
+            caseData: caseData
+          });
+        } else {
+          wx.showToast({
+            title: res.data.message || '病例不存在',
+            icon: 'error'
+          });
+          setTimeout(() => {
+            wx.navigateBack();
+          }, 1500);
+        }
+      },
+      fail: (err) => {
+        console.error('加载病例详情失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
+        setTimeout(() => {
+          wx.navigateBack();
+        }, 1500);
+      },
+      complete: () => {
+        // 确保hideLoading被调用
+        wx.hideLoading();
+      }
+    });
   },
 
   // 格式化时间

@@ -1,14 +1,15 @@
 // app.js
 App({
   onLaunch() {
-    // 登录
-    wx.login({
-      success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      }
-    })
+    // 检查是否已登录
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      console.log('用户未登录');
+    }
   },
+  
   globalData: {
-    userInfo: null
+    userInfo: null,
+    baseUrl: 'https://97b3d5237d85.ngrok-free.app/api'  // 您的ngrok域名
   }
 })

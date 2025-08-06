@@ -78,15 +78,62 @@ Page({
       return;
     }
 
-    wx.setStorageSync('userInfo', userInfo);
-    wx.showToast({
-      title: '保存成功',
-      icon: 'success',
-      duration: 2000,
-      success: () => {
-        setTimeout(() => {
-          wx.navigateBack();
-        }, 2000);
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'error'
+      });
+      return;
+    }
+
+    wx.showLoading({
+      title: '保存中...'
+    });
+
+    const baseUrl = getApp().globalData.baseUrl;
+    wx.request({
+      url: `${baseUrl}/user/profile`,
+      method: 'PUT',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      data: {
+        name: userInfo.name,
+        gender: userInfo.gender,
+        age: userInfo.age,
+        phone: userInfo.phone || ''
+      },
+      success: (res) => {
+        wx.hideLoading();
+        if (res.data.success) {
+          // 同时更新本地存储
+          wx.setStorageSync('userInfo', userInfo);
+          wx.showToast({
+            title: '保存成功',
+            icon: 'success',
+            duration: 2000,
+            success: () => {
+              setTimeout(() => {
+                wx.navigateBack();
+              }, 2000);
+            }
+          });
+        } else {
+          wx.showToast({
+            title: res.data.message || '保存失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('保存失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
       }
     });
   }
