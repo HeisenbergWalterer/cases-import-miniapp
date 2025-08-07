@@ -86,6 +86,27 @@
   word-wrap: break-word;
 }
 
+.value.multi-line {
+  white-space: pre-wrap;
+  max-height: 400rpx;
+  overflow-y: auto;
+  background: #f8f9fa;
+  padding: 16rpx;
+  border-radius: 8rpx;
+  margin-top: 8rpx;
+}
+
+/* 空值文本 */
+.empty-text {
+  font-size: 26rpx;
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 16rpx;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+}
+
 /* 标签列表 */
 .tag-list {
   display: flex;
@@ -99,6 +120,26 @@
   padding: 8rpx 16rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
+}
+
+/* 调试信息 */
+.debug-section {
+  background: #fff3cd;
+  border: 1rpx solid #ffeaa7;
+}
+
+.debug-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.debug-text {
+  font-size: 24rpx;
+  color: #856404;
+  background: #fff;
+  padding: 8rpx;
+  border-radius: 4rpx;
 }
 
 /* 操作按钮 */

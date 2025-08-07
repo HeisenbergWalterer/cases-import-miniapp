@@ -2,68 +2,72 @@
   <!-- 病例基本信息 -->
   <view class="case-header">
     <view class="patient-info">
-      <view class="patient-name">{{caseData.patientName}}</view>
+      <view class="patient-name">{{caseData.patient_name || '未知患者'}}</view>
       <view class="patient-details">
-        <text class="detail-item">{{caseData.gender}} | {{caseData.age}}岁</text>
-        <text class="detail-item" wx:if="{{caseData.hospitalId}}">住院号：{{caseData.hospitalId}}</text>
-        <text class="detail-item" wx:if="{{caseData.pathologyId}}">病理号：{{caseData.pathologyId}}</text>
+        <text class="detail-item">{{caseData.gender || '未设置'}} | {{caseData.age || 0}}岁</text>
       </view>
     </view>
     <view class="case-time">{{caseData.createTime}}</view>
   </view>
 
   <!-- 症状信息 -->
-  <view class="section" wx:if="{{caseData.symptomDuration}}">
+  <view class="section" wx:if="{{caseData.symptom_duration}}">
     <view class="section-title">症状信息</view>
     <view class="section-content">
       <view class="info-row">
         <text class="label">症状出现时间：</text>
-        <text class="value">{{caseData.symptomDuration}}{{caseData.durationUnit}}</text>
+        <text class="value">{{caseData.symptom_duration}}{{caseData.duration_unit}}</text>
       </view>
     </view>
   </view>
 
   <!-- 合并疾病 -->
-  <view class="section" wx:if="{{caseData.comorbidities.length > 0}}">
+  <view class="section">
     <view class="section-title">合并疾病</view>
     <view class="section-content">
-      <view class="tag-list">
+      <view class="tag-list" wx:if="{{caseData.comorbidities.length > 0}}">
         <view class="tag" wx:for="{{caseData.comorbidities}}" wx:key="*this">{{item}}</view>
       </view>
+      <view class="empty-text" wx:else>无</view>
     </view>
   </view>
 
   <!-- 既往病史 -->
-  <view class="section" wx:if="{{caseData.pastHistory.length > 0}}">
+  <view class="section">
     <view class="section-title">既往病史</view>
     <view class="section-content">
-      <view class="tag-list">
-        <view class="tag" wx:for="{{caseData.pastHistory}}" wx:key="*this">{{item}}</view>
+      <view class="tag-list" wx:if="{{caseData.past_history.length > 0}}">
+        <view class="tag" wx:for="{{caseData.past_history}}" wx:key="*this">{{item}}</view>
       </view>
+      <view class="empty-text" wx:else>无</view>
     </view>
   </view>
 
   <!-- 影像学报告 -->
-  <view class="section" wx:if="{{caseData.ultrasoundReport}}">
+  <view class="section">
     <view class="section-title">影像学报告（B超）</view>
     <view class="section-content">
-      <view class="info-row" wx:if="{{caseData.ultrasoundReport}}">
+      <view class="info-row">
         <text class="label">报告内容：</text>
-        <text class="value">{{caseData.ultrasoundReport}}</text>
+        <text class="value multi-line" wx:if="{{caseData.ultrasound_report && caseData.ultrasound_report.length > 0}}">{{caseData.ultrasound_report}}</text>
+        <text class="empty-text" wx:else>无</text>
       </view>
     </view>
   </view>
 
   <!-- 病理报告 -->
-  <view class="section" wx:if="{{caseData.pathologyReport}}">
+  <view class="section">
     <view class="section-title">病理报告</view>
     <view class="section-content">
-      <view class="info-row" wx:if="{{caseData.pathologyReport}}">
+      <view class="info-row">
         <text class="label">报告内容：</text>
-        <text class="value">{{caseData.pathologyReport}}</text>
+        <text class="value multi-line" wx:if="{{caseData.pathology_report && caseData.pathology_report.length > 0}}">{{caseData.pathology_report}}</text>
+        <text class="empty-text" wx:else>无</text>
       </view>
     </view>
   </view>
+
+
 
   <!-- 操作按钮 -->
   <view class="action-buttons">

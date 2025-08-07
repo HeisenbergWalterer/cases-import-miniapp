@@ -15,6 +15,13 @@ Page({
   // 加载病例数据
   loadCases() {
     const token = wx.getStorageSync('token');
+    const userInfo = wx.getStorageSync('userInfo');
+    
+    console.log('=== 病例列表加载调试信息 ===');
+    console.log('Token存在:', !!token);
+    console.log('Token内容:', token ? token.substring(0, 20) + '...' : 'null');
+    console.log('用户信息:', userInfo);
+    
     if (!token) {
       wx.showToast({
         title: '请先登录',
@@ -28,6 +35,8 @@ Page({
     });
 
     const baseUrl = getApp().globalData.baseUrl;
+    console.log('请求URL:', `${baseUrl}/cases`);
+    
     wx.request({
       url: `${baseUrl}/cases`,
       method: 'GET',
@@ -36,7 +45,30 @@ Page({
         'ngrok-skip-browser-warning': 'true'
       },
       success: (res) => {
-        if (res.data.success) {
+        console.log('获取病例列表API响应:', res);
+        console.log('响应状态码:', res.statusCode);
+        console.log('响应数据:', res.data);
+        
+        // 检查是否收到HTML页面（ngrok拦截页面）
+        if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE html>')) {
+          console.error('收到HTML页面，可能是ngrok拦截');
+          wx.showToast({
+            title: 'API访问被拦截',
+            icon: 'error'
+          });
+          return;
+        }
+        
+        if (res.statusCode === 200 && res.data && res.data.success) {
+          // 检查是否有病例数据
+          if (!res.data.cases || !Array.isArray(res.data.cases)) {
+            console.warn('病例数据格式异常:', res.data.cases);
+            this.setData({
+              cases: []
+            });
+            return;
+          }
+          
           // 格式化时间显示
           const formattedCases = res.data.cases.map(caseItem => ({
             ...caseItem,
@@ -46,9 +78,16 @@ Page({
           this.setData({
             cases: formattedCases
           });
+          
+          console.log('病例列表加载成功，共', formattedCases.length, '个病例');
+          
+          if (formattedCases.length === 0) {
+            console.log('提示：当前没有病例数据');
+          }
         } else {
+          console.error('API返回失败:', res.data);
           wx.showToast({
-            title: res.data.message || '加载失败',
+            title: res.data?.message || '加载失败',
             icon: 'error'
           });
         }
@@ -144,7 +183,12 @@ Page({
   // 根据ID删除病例
   deleteCaseById(caseId) {
     const token = wx.getStorageSync('token');
+    console.log('=== 删除病例前端调试信息 ===');
+    console.log('要删除的病例ID:', caseId);
+    console.log('Token存在:', !!token);
+    
     if (!token) {
+      console.error('删除失败: 没有token');
       wx.showToast({
         title: '请先登录',
         icon: 'error'
@@ -157,16 +201,35 @@ Page({
     });
 
     const baseUrl = getApp().globalData.baseUrl;
+    const requestUrl = `${baseUrl}/cases/${caseId}`;
+    console.log('删除请求URL:', requestUrl);
+    
     wx.request({
-      url: `${baseUrl}/cases/${caseId}`,
+      url: requestUrl,
       method: 'DELETE',
       header: {
         'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true'
       },
       success: (res) => {
+        console.log('删除API响应:', res);
+        console.log('响应状态码:', res.statusCode);
+        console.log('响应数据:', res.data);
+        
         wx.hideLoading();
-        if (res.data.success) {
+        
+        // 检查是否收到HTML页面（ngrok拦截页面）
+        if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE html>')) {
+          console.error('收到HTML页面，可能是ngrok拦截');
+          wx.showToast({
+            title: 'API访问被拦截',
+            icon: 'error'
+          });
+          return;
+        }
+        
+        if (res.statusCode === 200 && res.data && res.data.success) {
+          console.log('删除成功');
           wx.showToast({
             title: '删除成功',
             icon: 'success'
@@ -174,14 +237,16 @@ Page({
           // 重新加载病例列表
           this.loadCases();
         } else {
+          console.error('删除失败:', res.data);
           wx.showToast({
-            title: res.data.message || '删除失败',
+            title: res.data?.message || '删除失败',
             icon: 'error'
           });
         }
       },
       fail: (err) => {
-        console.error('删除病例失败:', err);
+        console.error('删除病例网络错误:', err);
+        console.error('错误详情:', JSON.stringify(err));
         wx.hideLoading();
         wx.showToast({
           title: '网络错误',
@@ -191,6 +256,7 @@ Page({
       complete: () => {
         // 确保hideLoading被调用
         wx.hideLoading();
+        console.log('=== 删除病例调试信息结束 ===');
       }
     });
   },
