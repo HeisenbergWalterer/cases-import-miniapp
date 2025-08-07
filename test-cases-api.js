@@ -2,6 +2,53 @@ const https = require('https');
 
 const BASE_URL = 'https://ecd114a5180e.ngrok-free.app';
 
+// 测试用户登录获取token
+function testUserLogin() {
+  return new Promise((resolve, reject) => {
+    const postData = JSON.stringify({ 
+      code: 'test_code_123',
+      userInfo: {
+        nickName: '测试用户',
+        avatarUrl: 'https://example.com/avatar.jpg'
+      }
+    });
+    
+    const options = {
+      hostname: 'ecd114a5180e.ngrok-free.app',
+      port: 443,
+      path: '/api/user/login',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData)
+      }
+    };
+    
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const result = JSON.parse(data);
+          console.log('✅ 用户登录测试通过:', result);
+          resolve(result);
+        } catch (error) {
+          console.log('❌ 用户登录失败:', data);
+          reject(error);
+        }
+      });
+    });
+    
+    req.on('error', (error) => {
+      console.log('❌ 用户登录失败 - 网络错误:', error.message);
+      reject(error);
+    });
+    
+    req.write(postData);
+    req.end();
+  });
+}
+
 // 测试创建病例
 function testCreateCase(token) {
   return new Promise((resolve, reject) => {
@@ -95,50 +142,9 @@ function testGetCases(token) {
   });
 }
 
-// 测试用户登录获取token
-function testUserLogin() {
-  return new Promise((resolve, reject) => {
-    const postData = JSON.stringify({ code: 'test_code' });
-    
-    const options = {
-      hostname: 'ecd114a5180e.ngrok-free.app',
-      port: 443,
-      path: '/api/user/login',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData)
-      }
-    };
-    
-    const req = https.request(options, (res) => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          const result = JSON.parse(data);
-          console.log('✅ 用户登录测试通过:', result);
-          resolve(result);
-        } catch (error) {
-          console.log('❌ 用户登录失败:', data);
-          reject(error);
-        }
-      });
-    });
-    
-    req.on('error', (error) => {
-      console.log('❌ 用户登录失败 - 网络错误:', error.message);
-      reject(error);
-    });
-    
-    req.write(postData);
-    req.end();
-  });
-}
-
 // 主测试函数
 async function runTests() {
-  console.log('🚀 开始测试病例功能...\n');
+  console.log('🚀 开始测试病例相关API...\n');
   
   try {
     // 1. 用户登录获取token
@@ -150,20 +156,14 @@ async function runTests() {
     const caseId = createResult.caseId;
     
     // 3. 获取病例列表
-    await testGetCases(token);
+    const casesResult = await testGetCases(token);
     
     console.log('\n🎉 所有病例功能测试通过！');
-    console.log('\n📱 现在可以测试小程序功能了：');
-    console.log('1. 重新编译小程序');
-    console.log('2. 测试病例导入功能');
-    console.log('3. 测试病例列表显示');
-    console.log('4. 测试病例详情查看');
+    console.log(`创建了病例ID: ${caseId}`);
+    console.log(`病例列表包含 ${casesResult.cases?.length || 0} 个病例`);
     
   } catch (error) {
-    console.log('\n❌ 测试失败，请检查：');
-    console.log('1. 后端服务是否正常运行');
-    console.log('2. 数据库连接是否正常');
-    console.log('3. API接口是否正确');
+    console.log('\n❌ 测试失败:', error.message);
   }
 }
 

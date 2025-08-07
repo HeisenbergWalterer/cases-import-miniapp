@@ -1,6 +1,6 @@
 const https = require('https');
 
-const BASE_URL = 'https://97b3d5237d85.ngrok-free.app';
+const BASE_URL = 'https://ecd114a5180e.ngrok-free.app';
 
 // 测试健康检查
 function testHealthCheck() {
@@ -39,7 +39,7 @@ function testUserLogin() {
     const postData = JSON.stringify({ code: 'test_code' });
     
     const options = {
-      hostname: '97b3d5237d85.ngrok-free.app',
+      hostname: 'ecd114a5180e.ngrok-free.app',
       port: 443,
       path: '/api/user/login',
       method: 'POST',

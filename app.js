@@ -10,6 +10,6 @@ App({
   
   globalData: {
     userInfo: null,
-    baseUrl: 'https://97b3d5237d85.ngrok-free.app/api'  // 您的ngrok域名
+    baseUrl: 'https://ecd114a5180e.ngrok-free.app/api'  // 您的ngrok域名
   }
 })

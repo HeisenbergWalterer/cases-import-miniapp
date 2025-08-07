@@ -35,7 +35,6 @@ Page({
         'Authorization': `Bearer ${token}`
       },
       success: (res) => {
-        wx.hideLoading();
         if (res.data.success) {
           // 格式化时间显示
           const formattedCases = res.data.cases.map(caseItem => ({
@@ -55,7 +54,6 @@ Page({
       },
       fail: (err) => {
         console.error('加载病例数据失败:', err);
-        wx.hideLoading();
         wx.showToast({
           title: '网络错误',
           icon: 'error'
