@@ -49,21 +49,15 @@
     <view class="form-step" wx:if="{{currentStep === 4}}">
       <view class="step-title">影像学报告（B超）</view>
       
-      <!-- 照片导入功能 -->
+      <!-- OCR照片识别功能 -->
       <view class="form-group">
-        <view class="form-label">导入报告照片</view>
-        <view class="photo-upload-section">
-          <view class="photo-grid">
-            <view class="photo-item" wx:for="{{formData.ultrasoundPhotos}}" wx:key="index">
-              <image class="photo-preview" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-current="{{item}}" data-urls="{{formData.ultrasoundPhotos}}" />
-              <view class="photo-delete" bindtap="deleteUltrasoundPhoto" data-index="{{index}}">×</view>
-            </view>
-            <view class="photo-add" wx:if="{{formData.ultrasoundPhotos.length < 6}}" bindtap="chooseUltrasoundPhoto">
-              <text class="add-icon">+</text>
-              <text class="add-text">添加照片</text>
-            </view>
-          </view>
-          <view class="photo-tip">最多可上传6张照片，支持JPG、PNG格式</view>
+        <view class="form-label">照片文字识别</view>
+        <view class="ocr-section">
+          <button class="ocr-btn" bindtap="chooseUltrasoundPhoto">
+            <text class="ocr-icon">📷</text>
+            <text class="ocr-text">拍照/选择图片识别文字</text>
+          </button>
+          <view class="ocr-tip">选择报告照片，自动识别文字并填入下方文本框</view>
         </view>
       </view>
 
@@ -83,21 +77,15 @@
     <view class="form-step" wx:if="{{currentStep === 5}}">
       <view class="step-title">病理报告</view>
       
-      <!-- 照片导入功能 -->
+      <!-- OCR照片识别功能 -->
       <view class="form-group">
-        <view class="form-label">导入报告照片</view>
-        <view class="photo-upload-section">
-          <view class="photo-grid">
-            <view class="photo-item" wx:for="{{formData.pathologyPhotos}}" wx:key="index">
-              <image class="photo-preview" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-current="{{item}}" data-urls="{{formData.pathologyPhotos}}" />
-              <view class="photo-delete" bindtap="deletePathologyPhoto" data-index="{{index}}">×</view>
-            </view>
-            <view class="photo-add" wx:if="{{formData.pathologyPhotos.length < 6}}" bindtap="choosePathologyPhoto">
-              <text class="add-icon">+</text>
-              <text class="add-text">添加照片</text>
-            </view>
-          </view>
-          <view class="photo-tip">最多可上传6张照片，支持JPG、PNG格式</view>
+        <view class="form-label">照片文字识别</view>
+        <view class="ocr-section">
+          <button class="ocr-btn" bindtap="choosePathologyPhoto">
+            <text class="ocr-icon">📷</text>
+            <text class="ocr-text">拍照/选择图片识别文字</text>
+          </button>
+          <view class="ocr-tip">选择报告照片，自动识别文字并填入下方文本框</view>
         </view>
       </view>
 

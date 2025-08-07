@@ -226,80 +226,43 @@
   transform: scale(0.98);
 } 
 
-/* 照片上传样式 */
-.photo-upload-section {
+/* OCR功能样式 */
+.ocr-section {
   margin-top: 16rpx;
 }
 
-.photo-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  margin-bottom: 16rpx;
-}
-
-.photo-item {
-  position: relative;
-  width: 200rpx;
-  height: 200rpx;
-  border-radius: 12rpx;
-  overflow: hidden;
-}
-
-.photo-preview {
+.ocr-btn {
   width: 100%;
-  height: 100%;
-  border-radius: 12rpx;
-}
-
-.photo-delete {
-  position: absolute;
-  top: 8rpx;
-  right: 8rpx;
-  width: 40rpx;
-  height: 40rpx;
-  background: rgba(255, 0, 0, 0.8);
+  padding: 24rpx;
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
   color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24rpx;
-  font-weight: bold;
-}
-
-.photo-add {
-  width: 200rpx;
-  height: 200rpx;
-  border: 2rpx dashed #e9ecef;
+  border: none;
   border-radius: 12rpx;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f8f9fa;
+  font-size: 28rpx;
+  margin-bottom: 16rpx;
   transition: all 0.3s ease;
 }
 
-.photo-add:active {
-  background: #e9ecef;
-  border-color: #4A90E2;
+.ocr-btn:active {
+  transform: scale(0.98);
+  opacity: 0.8;
 }
 
-.add-icon {
-  font-size: 48rpx;
-  color: #999;
-  margin-bottom: 8rpx;
+.ocr-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
 }
 
-.add-text {
+.ocr-text {
+  font-weight: 500;
+}
+
+.ocr-tip {
   font-size: 24rpx;
   color: #999;
-}
-
-.photo-tip {
-  font-size: 22rpx;
-  color: #999;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
 } 

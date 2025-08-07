@@ -8,16 +8,12 @@ Page({
       patientName: '',
       gender: '',
       age: '',
-      hospitalId: '',
-      pathologyId: '',
       symptomDuration: '',
       durationUnit: '',
       comorbidities: [],
       pastHistory: [],
       ultrasoundReport: '',
-      ultrasoundPhotos: [],
-      pathologyReport: '',
-      pathologyPhotos: []
+      pathologyReport: ''
     },
     durationOptions: ['请选择', '天', '周', '月', '年'],
     durationIndex: 0,
@@ -71,16 +67,12 @@ Page({
       pastHistoryOptions: pastHistoryOptions,
       formData: {
         ...basicInfo,
-        hospitalId: '',
-        pathologyId: '',
         symptomDuration: '',
         durationUnit: '',
         comorbidities: [],
         pastHistory: [],
         ultrasoundReport: '',
-        ultrasoundPhotos: [],
-        pathologyReport: '',
-        pathologyPhotos: []
+        pathologyReport: ''
       },
       durationIndex: 0,
       currentStep: 1,
@@ -324,13 +316,35 @@ Page({
       return;
     }
 
-    // 构建完整的病例数据
+    // 构建完整的病例数据，优化JSON结构
     const caseData = {
-      ...this.data.formData,
-      // 确保基本信息来自用户个人信息
-      patientName: userInfo.name,
-      gender: userInfo.gender,
-      age: userInfo.age
+      // 基本患者信息
+      patient: {
+        name: userInfo.name,
+        gender: userInfo.gender,
+        age: parseInt(userInfo.age) || 0
+      },
+      // 症状信息
+      symptoms: {
+        duration: parseInt(this.data.formData.symptomDuration) || 0,
+        durationUnit: this.data.formData.durationUnit
+      },
+      // 疾病史（JSON数组）
+      medicalHistory: {
+        comorbidities: this.data.formData.comorbidities || [],
+        pastHistory: this.data.formData.pastHistory || []
+      },
+      // 报告内容
+      reports: {
+        ultrasound: this.data.formData.ultrasoundReport || '',
+        pathology: this.data.formData.pathologyReport || ''
+      },
+      // 元数据
+      metadata: {
+        createdAt: new Date().toISOString(),
+        source: 'miniapp',
+        version: '1.0'
+      }
     };
 
     const baseUrl = getApp().globalData.baseUrl;
@@ -376,33 +390,23 @@ Page({
     });
   },
 
-  // 选择影像学报告照片
+  // 选择影像学报告照片进行OCR识别
   chooseUltrasoundPhoto() {
-    const remainingCount = 6 - this.data.formData.ultrasoundPhotos.length;
-    
     wx.chooseImage({
-      count: remainingCount,
+      count: 1, // 一次只选择一张照片进行OCR
       sizeType: ['original', 'compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
-        const tempFilePaths = res.tempFilePaths;
-        const currentPhotos = this.data.formData.ultrasoundPhotos;
-        const newPhotos = [...currentPhotos, ...tempFilePaths];
-        
-        this.setData({
-          'formData.ultrasoundPhotos': newPhotos
-        });
+        const tempFilePath = res.tempFilePaths[0];
         
         wx.showToast({
-          title: '照片添加成功',
-          icon: 'success',
+          title: '正在识别文字...',
+          icon: 'loading',
           duration: 1500
         });
 
-        // 对新添加的照片进行OCR文字识别
-        tempFilePaths.forEach((filePath, index) => {
-          this.performOCR(filePath, 'ultrasound');
-        });
+        // 对照片进行OCR文字识别
+        this.performOCR(tempFilePath, 'ultrasound');
       },
       fail: () => {
         wx.showToast({
@@ -414,33 +418,23 @@ Page({
     });
   },
 
-  // 选择病理报告照片
+  // 选择病理报告照片进行OCR识别
   choosePathologyPhoto() {
-    const remainingCount = 6 - this.data.formData.pathologyPhotos.length;
-    
     wx.chooseImage({
-      count: remainingCount,
+      count: 1, // 一次只选择一张照片进行OCR
       sizeType: ['original', 'compressed'],
       sourceType: ['album', 'camera'],
       success: (res) => {
-        const tempFilePaths = res.tempFilePaths;
-        const currentPhotos = this.data.formData.pathologyPhotos;
-        const newPhotos = [...currentPhotos, ...tempFilePaths];
-        
-        this.setData({
-          'formData.pathologyPhotos': newPhotos
-        });
+        const tempFilePath = res.tempFilePaths[0];
         
         wx.showToast({
-          title: '照片添加成功',
-          icon: 'success',
+          title: '正在识别文字...',
+          icon: 'loading',
           duration: 1500
         });
 
-        // 对新添加的照片进行OCR文字识别
-        tempFilePaths.forEach((filePath, index) => {
-          this.performOCR(filePath, 'pathology');
-        });
+        // 对照片进行OCR文字识别
+        this.performOCR(tempFilePath, 'pathology');
       },
       fail: () => {
         wx.showToast({
@@ -452,66 +446,7 @@ Page({
     });
   },
 
-  // 删除影像学报告照片
-  deleteUltrasoundPhoto(e) {
-    const index = e.currentTarget.dataset.index;
-    const photos = this.data.formData.ultrasoundPhotos;
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这张照片吗？',
-      success: (res) => {
-        if (res.confirm) {
-          photos.splice(index, 1);
-          this.setData({
-            'formData.ultrasoundPhotos': photos
-          });
-          
-          wx.showToast({
-            title: '删除成功',
-            icon: 'success',
-            duration: 1500
-          });
-        }
-      }
-    });
-  },
 
-  // 删除病理报告照片
-  deletePathologyPhoto(e) {
-    const index = e.currentTarget.dataset.index;
-    const photos = this.data.formData.pathologyPhotos;
-    
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这张照片吗？',
-      success: (res) => {
-        if (res.confirm) {
-          photos.splice(index, 1);
-          this.setData({
-            'formData.pathologyPhotos': photos
-          });
-          
-          wx.showToast({
-            title: '删除成功',
-            icon: 'success',
-            duration: 1500
-          });
-        }
-      }
-    });
-  },
-
-  // 预览照片
-  previewPhoto(e) {
-    const current = e.currentTarget.dataset.current;
-    const urls = e.currentTarget.dataset.urls;
-    
-    wx.previewImage({
-      current: current,
-      urls: urls
-    });
-  },
 
   // OCR文字识别功能
   performOCR(imagePath, type) {
