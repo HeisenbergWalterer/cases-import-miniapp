@@ -17,14 +17,120 @@ Page({
 
   // 加载用户信息
   loadUserInfo() {
-    const userInfo = wx.getStorageSync('userInfo');
-    if (userInfo) {
-      const genderIndex = userInfo.gender === '男' ? 1 : userInfo.gender === '女' ? 2 : 0;
-      this.setData({
-        userInfo: userInfo,
-        genderIndex: genderIndex
-      });
+    const token = wx.getStorageSync('token');
+    if (token) {
+      // 如果有token，从后端获取最新的用户信息
+      this.fetchUserProfile();
+    } else {
+      // 没有token时，使用本地存储的信息
+      const userInfo = wx.getStorageSync('userInfo');
+      if (userInfo) {
+        const genderIndex = userInfo.gender === '男' ? 1 : userInfo.gender === '女' ? 2 : 0;
+        this.setData({
+          userInfo: userInfo,
+          genderIndex: genderIndex
+        });
+      }
     }
+  },
+
+  // 从后端获取用户完整信息
+  fetchUserProfile() {
+    const token = wx.getStorageSync('token');
+    console.log('获取到的token:', token ? '存在token' : '无token');
+    if (!token) {
+      console.error('没有token，无法获取用户信息');
+      return;
+    }
+
+    const baseUrl = getApp().globalData.baseUrl;
+    const url = `${baseUrl}/user/profile`;
+    console.log('请求URL:', url);
+    console.log('请求头Authorization:', `Bearer ${token.substring(0, 10)}...`);
+    
+    wx.request({
+      url: url,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      },
+      success: (res) => {
+        console.log('获取用户信息API响应:', res);
+        console.log('响应状态码:', res.statusCode);
+        console.log('响应数据类型:', typeof res.data);
+        console.log('响应数据:', res.data);
+        
+        // 检查是否收到HTML页面（ngrok拦截页面）
+        if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE html>')) {
+          console.error('收到HTML页面，可能是ngrok拦截，使用本地存储数据');
+          const localUserInfo = wx.getStorageSync('userInfo');
+          console.log('HTML响应-使用本地存储的用户信息:', localUserInfo);
+          if (localUserInfo) {
+            const genderIndex = localUserInfo.gender === '男' ? 1 : localUserInfo.gender === '女' ? 2 : 0;
+            this.setData({
+              userInfo: localUserInfo,
+              genderIndex: genderIndex
+            });
+          }
+          return;
+        }
+        
+        if (res.statusCode === 200 && res.data && res.data.success) {
+          const userInfo = res.data.userInfo;
+          console.log('获取到的用户信息:', userInfo);
+          
+          // 处理null值，转换为空字符串或默认值
+          const processedUserInfo = {
+            ...userInfo,
+            name: userInfo.name || '',
+            gender: userInfo.gender || '',
+            age: userInfo.age || '',
+            phone: userInfo.phone || ''
+          };
+          
+          const genderIndex = processedUserInfo.gender === '男' ? 1 : processedUserInfo.gender === '女' ? 2 : 0;
+          this.setData({
+            userInfo: processedUserInfo,
+            genderIndex: genderIndex
+          });
+          // 同时更新本地存储
+          wx.setStorageSync('userInfo', processedUserInfo);
+        } else {
+          console.error('获取用户信息失败');
+          console.error('响应状态码:', res.statusCode);
+          console.error('响应数据:', res.data);
+          console.error('错误信息:', res.data?.message || '未知错误');
+          
+          // 如果获取失败，使用本地存储的信息
+          const localUserInfo = wx.getStorageSync('userInfo');
+          console.log('使用本地存储的用户信息:', localUserInfo);
+          if (localUserInfo) {
+            const genderIndex = localUserInfo.gender === '男' ? 1 : localUserInfo.gender === '女' ? 2 : 0;
+            this.setData({
+              userInfo: localUserInfo,
+              genderIndex: genderIndex
+            });
+          }
+        }
+      },
+      fail: (err) => {
+        console.error('获取用户信息网络错误:', err);
+        console.error('错误详情:', JSON.stringify(err));
+        
+        // 网络错误时，使用本地存储的信息
+        const localUserInfo = wx.getStorageSync('userInfo');
+        console.log('网络错误-使用本地存储的用户信息:', localUserInfo);
+        if (localUserInfo) {
+          const genderIndex = localUserInfo.gender === '男' ? 1 : localUserInfo.gender === '女' ? 2 : 0;
+          this.setData({
+            userInfo: localUserInfo,
+            genderIndex: genderIndex
+          });
+        }
+      }
+    });
   },
 
   // 姓名输入
@@ -97,7 +203,8 @@ Page({
       method: 'PUT',
       header: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
       },
       data: {
         name: userInfo.name,

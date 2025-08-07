@@ -339,7 +339,8 @@ Page({
       method: 'POST',
       header: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
       },
       data: caseData,
       success: (res) => {

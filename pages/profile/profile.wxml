@@ -7,6 +7,14 @@
       </view>
       <view class="user-details">
         <view class="user-name">{{userInfo.name || '未设置姓名'}}</view>
+        <view class="user-info-item">
+          <text class="info-label">性别：</text>
+          <text class="info-value">{{userInfo.gender || '未设置'}}</text>
+        </view>
+        <view class="user-info-item">
+          <text class="info-label">年龄：</text>
+          <text class="info-value">{{userInfo.age || '未设置'}}</text>
+        </view>
         <view class="user-phone">{{userInfo.phone || '未绑定手机号'}}</view>
       </view>
     </view>

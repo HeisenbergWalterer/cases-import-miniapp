@@ -42,9 +42,28 @@
   margin-bottom: 8rpx;
 }
 
+.user-info-item {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 6rpx;
+  display: flex;
+  align-items: center;
+}
+
+.info-label {
+  color: #888;
+  margin-right: 8rpx;
+}
+
+.info-value {
+  color: #333;
+  font-weight: 500;
+}
+
 .user-phone {
   font-size: 26rpx;
   color: #666;
+  margin-top: 8rpx;
 }
 
 /* 登录区域 */

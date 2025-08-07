@@ -16,11 +16,11 @@ Page({
   // 检查用户登录状态
   checkUserLoginStatus() {
     const userInfo = wx.getStorageSync('userInfo');
-    if (userInfo) {
-      this.setData({
-        userInfo: userInfo,
-        hasUserInfo: true
-      });
+    const token = wx.getStorageSync('token');
+    
+    if (userInfo && token) {
+      // 如果已登录，从后端获取最新的完整用户信息
+      this.fetchUserProfile();
     } else {
       // 初始化空的用户信息
       this.setData({
@@ -33,6 +33,99 @@ Page({
         hasUserInfo: false
       });
     }
+  },
+
+  // 从后端获取用户完整信息
+  fetchUserProfile() {
+    const token = wx.getStorageSync('token');
+    console.log('个人资料页面-获取到的token:', token ? '存在token' : '无token');
+    if (!token) {
+      console.error('个人资料页面-没有token，无法获取用户信息');
+      return;
+    }
+
+    const baseUrl = getApp().globalData.baseUrl;
+    const url = `${baseUrl}/user/profile`;
+    console.log('个人资料页面-请求URL:', url);
+    console.log('个人资料页面-请求头Authorization:', `Bearer ${token.substring(0, 10)}...`);
+    
+    wx.request({
+      url: url,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      },
+      success: (res) => {
+        console.log('个人资料页面-获取用户信息API响应:', res);
+        console.log('响应状态码:', res.statusCode);
+        console.log('响应数据类型:', typeof res.data);
+        console.log('响应数据:', res.data);
+        
+        // 检查是否收到HTML页面（ngrok拦截页面）
+        if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE html>')) {
+          console.error('个人资料页面-收到HTML页面，可能是ngrok拦截，使用本地存储数据');
+          const localUserInfo = wx.getStorageSync('userInfo');
+          console.log('个人资料页面-HTML响应-使用本地存储的用户信息:', localUserInfo);
+          if (localUserInfo) {
+            this.setData({
+              userInfo: localUserInfo,
+              hasUserInfo: true
+            });
+          }
+          return;
+        }
+        
+        if (res.statusCode === 200 && res.data && res.data.success) {
+          // 更新页面数据和本地存储
+          const userInfo = res.data.userInfo;
+          console.log('获取到的用户信息:', userInfo);
+          
+          // 处理null值，转换为空字符串或默认值
+          const processedUserInfo = {
+            ...userInfo,
+            name: userInfo.name || '',
+            gender: userInfo.gender || '',
+            age: userInfo.age || '',
+            phone: userInfo.phone || ''
+          };
+          
+          this.setData({
+            userInfo: processedUserInfo,
+            hasUserInfo: true
+          });
+          // 同时更新本地存储，保持数据同步
+          wx.setStorageSync('userInfo', processedUserInfo);
+        } else {
+          console.error('个人资料页面-获取用户信息失败');
+          console.error('响应状态码:', res.statusCode);
+          console.error('响应数据:', res.data);
+          console.error('错误信息:', res.data?.message || '未知错误');
+          
+          // 如果获取失败，仍然使用本地存储的基本信息
+          const localUserInfo = wx.getStorageSync('userInfo');
+          console.log('使用本地存储的用户信息:', localUserInfo);
+          if (localUserInfo) {
+            this.setData({
+              userInfo: localUserInfo,
+              hasUserInfo: true
+            });
+          }
+        }
+      },
+      fail: (err) => {
+        console.error('获取用户信息网络错误:', err);
+        // 网络错误时，使用本地存储的信息
+        const localUserInfo = wx.getStorageSync('userInfo');
+        if (localUserInfo) {
+          this.setData({
+            userInfo: localUserInfo,
+            hasUserInfo: true
+          });
+        }
+      }
+    });
   },
 
   // 微信登录
@@ -87,7 +180,8 @@ Page({
       url: `${baseUrl}/user/login`,
       method: 'POST',
       header: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
       },
       data: {
         code: loginCode,

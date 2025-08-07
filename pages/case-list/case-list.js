@@ -32,7 +32,8 @@ Page({
       url: `${baseUrl}/cases`,
       method: 'GET',
       header: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
       },
       success: (res) => {
         if (res.data.success) {
@@ -160,7 +161,8 @@ Page({
       url: `${baseUrl}/cases/${caseId}`,
       method: 'DELETE',
       header: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
       },
       success: (res) => {
         wx.hideLoading();
