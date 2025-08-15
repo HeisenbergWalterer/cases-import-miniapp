@@ -176,6 +176,9 @@ Page({
   // 调用登录API
   callLoginAPI(loginCode, userInfo) {
     const baseUrl = getApp().globalData.baseUrl;
+    console.log('登录API-请求URL:', `${baseUrl}/user/login`);
+    console.log('登录API-请求数据:', { code: loginCode, userInfo: userInfo });
+    
     wx.request({
       url: `${baseUrl}/user/login`,
       method: 'POST',
@@ -188,8 +191,42 @@ Page({
         userInfo: userInfo
       },
       success: (res) => {
+        console.log('登录API-响应状态码:', res.statusCode);
+        console.log('登录API-响应数据:', res.data);
+        console.log('登录API-响应头:', res.header);
+        
         wx.hideLoading();
-        if (res.data.success) {
+        
+        // 检查HTTP状态码
+        if (res.statusCode === 400) {
+          console.error('登录API-400错误详情:', res.data);
+          wx.showToast({
+            title: res.data.message || res.data.error || '请求参数错误',
+            icon: 'error'
+          });
+          return;
+        }
+        
+        if (res.statusCode !== 200) {
+          console.error('登录API-HTTP错误:', res.statusCode, res.data);
+          wx.showToast({
+            title: `服务器错误 ${res.statusCode}`,
+            icon: 'error'
+          });
+          return;
+        }
+        
+        // 检查是否收到HTML页面（ngrok拦截页面）
+        if (typeof res.data === 'string' && res.data.includes('<!DOCTYPE html>')) {
+          console.error('登录API-收到HTML页面，可能是ngrok拦截');
+          wx.showToast({
+            title: 'ngrok访问受限，请稍后重试',
+            icon: 'error'
+          });
+          return;
+        }
+        
+        if (res.data && res.data.success) {
           // 保存token和用户信息
           wx.setStorageSync('token', res.data.token);
           wx.setStorageSync('userInfo', res.data.userInfo);
@@ -205,6 +242,7 @@ Page({
             duration: 2000
           });
         } else {
+          console.error('登录API-业务逻辑失败:', res.data);
           wx.showToast({
             title: res.data.message || '登录失败',
             icon: 'error'
@@ -212,10 +250,10 @@ Page({
         }
       },
       fail: (err) => {
-        console.error('登录失败:', err);
+        console.error('登录API-网络请求失败:', err);
         wx.hideLoading();
         wx.showToast({
-          title: '网络错误',
+          title: '网络连接失败',
           icon: 'error'
         });
       }
