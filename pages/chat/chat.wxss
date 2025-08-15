@@ -57,7 +57,7 @@
 /* 聊天内容区域 */
 .chat-content {
   flex: 1;
-  padding: 20rpx 40rpx 140rpx 20rpx;
+  padding: 20rpx 40rpx 240rpx 20rpx; /* 进一步增加底部padding到240rpx，确保AI回复不被遮挡 */
   overflow-y: auto;
 }
 
@@ -65,7 +65,7 @@
 
 /* 消息列表 */
 .message-list {
-  padding-bottom: 20rpx;
+  padding-bottom: 40rpx; /* 增加底部padding */
 }
 
 .message-item {
@@ -136,10 +136,22 @@
   margin-right: 20rpx;
 }
 
+/* 错误和降级消息样式 */
+.error-bubble {
+  border-color: #FCA5A5;
+  background: rgba(254, 226, 226, 0.98);
+}
+
+.fallback-bubble {
+  border-color: #FBBF24;
+  background: rgba(255, 243, 205, 0.98);
+}
+
 .message-text {
   font-size: 28rpx;
   line-height: 1.5;
   word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 .ai-bubble .message-text {
@@ -148,6 +160,78 @@
 
 .user-bubble .message-text {
   color: #FFFFFF;
+}
+
+/* 消息时间 */
+.message-time {
+  font-size: 20rpx;
+  color: #999;
+  margin-top: 8rpx;
+  text-align: right;
+}
+
+.user-bubble .message-time {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 消息状态提示 */
+.message-status {
+  margin-top: 8rpx;
+}
+
+.status-text {
+  font-size: 20rpx;
+  color: #F59E0B;
+  font-weight: 500;
+}
+
+/* AI正在输入 */
+.typing-bubble {
+  background: rgba(248, 249, 250, 0.98);
+  border: 2rpx solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4rpx;
+  align-items: center;
+}
+
+.typing-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background: #9CA3AF;
+  animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  30% {
+    transform: translateY(-10rpx);
+    opacity: 1;
+  }
+}
+
+.typing-text {
+  font-size: 24rpx;
+  color: #6B7280;
+  font-style: italic;
 }
 
 /* 底部输入区域 */
@@ -199,6 +283,10 @@
   border-radius: 14rpx;
   transition: all 0.3s ease;
   box-shadow: 0 2rpx 8rpx rgba(74, 144, 226, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80rpx;
 }
 
 .send-btn:active {
@@ -223,6 +311,27 @@
   font-size: 26rpx;
   color: #FFFFFF;
   font-weight: 500;
+}
+
+/* 加载状态 */
+.loading-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 32rpx;
+  height: 32rpx;
+  border: 3rpx solid rgba(255, 255, 255, 0.3);
+  border-top: 3rpx solid #FFFFFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* 历史对话弹窗 */
@@ -279,13 +388,41 @@
 }
 
 .history-item {
-  padding: 24rpx 32rpx;
+  display: flex;
+  align-items: center;
   border-bottom: 1rpx solid #F5F5F5;
   transition: all 0.3s ease;
 }
 
 .history-item:active {
   background: #F8F9FA;
+}
+
+.history-content {
+  flex: 1;
+  padding: 24rpx 32rpx;
+}
+
+.history-actions {
+  padding: 24rpx 16rpx;
+}
+
+.delete-btn {
+  padding: 8rpx 16rpx;
+  background: #FF4757;
+  border-radius: 8rpx;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:active {
+  background: #FF3742;
+  transform: scale(0.95);
+}
+
+.delete-text {
+  font-size: 22rpx;
+  color: #FFFFFF;
+  font-weight: 500;
 }
 
 .history-title {

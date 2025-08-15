@@ -15,23 +15,7 @@ Page({
     showHistoryModal: false,
     
     // 历史对话列表
-    historyChats: [
-      {
-        id: 1,
-        title: '关于高血压的咨询',
-        time: '2024-01-15 14:30'
-      },
-      {
-        id: 2,
-        title: '糖尿病饮食建议',
-        time: '2024-01-14 09:15'
-      },
-      {
-        id: 3,
-        title: '体检报告解读',
-        time: '2024-01-13 16:45'
-      }
-    ],
+    historyChats: [],
     
     // 当前聊天ID
     currentChatId: null,
@@ -41,7 +25,13 @@ Page({
     
     // 键盘状态
     keyboardHeight: 0,
-    isKeyboardShow: false
+    isKeyboardShow: false,
+    
+    // AI回复状态
+    isAITyping: false,
+    
+    // 加载状态
+    isLoading: false
   },
 
   onLoad() {
@@ -75,15 +65,77 @@ Page({
 
   // 初始化聊天
   initializeChat() {
-    // 可以在这里加载历史消息
-    this.loadChatHistory();
+    // 检查用户登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再使用AI聊天功能',
+        confirmText: '去登录',
+        cancelText: '取消',
+        success: (res) => {
+          if (res.confirm) {
+            wx.switchTab({
+              url: '/pages/profile/profile'
+            });
+          }
+        }
+      });
+      return;
+    }
+    
+    // 加载历史聊天会话
+    this.loadChatSessions();
+    
+    // 显示欢迎消息
+    this.showWelcomeMessage();
   },
 
-  // 加载聊天历史
-  loadChatHistory() {
-    const chatHistory = wx.getStorageSync('chatHistory') || [];
-    this.setData({
-      historyChats: chatHistory
+  // 显示欢迎消息
+  showWelcomeMessage() {
+    if (this.data.messages.length === 0) {
+      const welcomeMessage = {
+        id: `welcome_${Date.now()}`,
+        type: 'ai',
+        content: '您好！我是您的AI医疗助手，专注于为您提供健康咨询和医疗建议。\n\n我可以帮助您：\n• 解答健康相关问题\n• 分析症状和体征\n• 提供就医建议\n• 解读检查报告\n\n请注意：我的建议仅供参考，不能替代专业医生的诊断。如有紧急情况，请立即就医！\n\n有什么健康问题想要咨询吗？',
+        timestamp: new Date().toLocaleTimeString()
+      };
+      
+      this.setData({
+        messages: [welcomeMessage]
+      });
+      
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100);
+    }
+  },
+
+  // 加载聊天会话列表
+  loadChatSessions() {
+    const token = wx.getStorageSync('token');
+    if (!token) return;
+    
+    const baseUrl = getApp().globalData.baseUrl;
+    
+    wx.request({
+      url: `${baseUrl}/chat/sessions`,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
+      },
+      success: (res) => {
+        console.log('获取聊天会话响应:', res);
+        if (res.data.success) {
+          this.setData({
+            historyChats: res.data.sessions || []
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('获取聊天会话失败:', err);
+      }
     });
   },
 
@@ -116,13 +168,23 @@ Page({
   // 发送消息
   sendMessage() {
     const message = this.data.inputMessage.trim();
-    if (!message) {
+    if (!message || this.data.isLoading) {
+      return;
+    }
+
+    // 检查登录状态
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'error'
+      });
       return;
     }
 
     // 添加用户消息
     const userMessage = {
-      id: Date.now(),
+      id: `user_${Date.now()}`,
       type: 'user',
       content: message,
       timestamp: new Date().toLocaleTimeString()
@@ -132,46 +194,133 @@ Page({
     
     this.setData({
       messages: messages,
-      inputMessage: ''
+      inputMessage: '',
+      isLoading: true,
+      isAITyping: true
     });
 
     // 滚动到底部
     this.scrollToBottom();
 
-    // 模拟AI回复（延迟1秒）
-    setTimeout(() => {
-      this.simulateAIResponse(message);
-    }, 1000);
+    // 调用AI聊天API
+    this.callAIChatAPI(message);
   },
 
-  // 模拟AI回复
-  simulateAIResponse(userMessage) {
-    let aiResponse = '抱歉，AI功能正在开发中，暂时无法提供专业的医疗建议。';
+  // 调用AI聊天API
+  callAIChatAPI(message) {
+    const token = wx.getStorageSync('token');
+    const baseUrl = getApp().globalData.baseUrl;
     
-    // 简单的关键词回复
-    if (userMessage.includes('你好') || userMessage.includes('hello')) {
-      aiResponse = '你好！我是您的AI医疗助手，有什么健康问题可以咨询我。';
-    } else if (userMessage.includes('头痛') || userMessage.includes('发烧')) {
-      aiResponse = '根据您描述的症状，建议您及时就医，由专业医生进行诊断。如果症状严重，请立即前往医院。';
-    } else if (userMessage.includes('谢谢')) {
-      aiResponse = '不客气！如果还有其他健康问题，随时可以咨询我。';
-    }
-
-    const aiMessage = {
-      id: Date.now() + 1,
-      type: 'ai',
-      content: aiResponse,
-      timestamp: new Date().toLocaleTimeString()
-    };
-
-    const messages = [...this.data.messages, aiMessage];
+    // 准备上下文消息（排除欢迎消息）
+    const contextMessages = this.data.messages
+      .filter(msg => !msg.id.startsWith('welcome_'))
+      .slice(-10) // 只取最近10条消息作为上下文
+      .map(msg => ({
+        type: msg.type,
+        content: msg.content
+      }));
     
-    this.setData({
-      messages: messages
+    console.log('=== 前端AI聊天调试信息 ===');
+    console.log('发送消息:', message);
+    console.log('当前聊天ID:', this.data.currentChatId);
+    console.log('上下文消息数量:', contextMessages.length);
+    
+    wx.request({
+      url: `${baseUrl}/chat/message`,
+      method: 'POST',
+      timeout: 60000, // 设置60秒超时，适应AI模型处理时间
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true'
+      },
+      data: {
+        message: message,
+        chatId: this.data.currentChatId,
+        contextMessages: contextMessages
+      },
+      success: (res) => {
+        console.log('AI聊天API响应:', res);
+        
+        this.setData({
+          isLoading: false,
+          isAITyping: false
+        });
+        
+        if (res.data.success) {
+          // 更新聊天ID（如果是新聊天）
+          if (res.data.chatId && !this.data.currentChatId) {
+            this.setData({
+              currentChatId: res.data.chatId
+            });
+          }
+          
+          // 添加AI回复消息
+          const aiMessage = {
+            id: `ai_${Date.now()}`,
+            type: 'ai',
+            content: res.data.aiResponse,
+            timestamp: new Date().toLocaleTimeString(),
+            fallback: res.data.fallback || false
+          };
+          
+          const messages = [...this.data.messages, aiMessage];
+          this.setData({
+            messages: messages
+          });
+          
+          // 滚动到底部
+          this.scrollToBottom();
+          
+          // 如果是降级响应，显示提示
+          if (res.data.fallback) {
+            wx.showToast({
+              title: 'AI服务暂时不可用',
+              icon: 'none',
+              duration: 2000
+            });
+          }
+          
+          // 重新加载聊天会话列表（更新时间）
+          this.loadChatSessions();
+          
+        } else {
+          wx.showToast({
+            title: res.data.message || 'AI聊天失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('AI聊天API调用失败:', err);
+        
+        this.setData({
+          isLoading: false,
+          isAITyping: false
+        });
+        
+        // 添加错误提示消息
+        const errorMessage = {
+          id: `error_${Date.now()}`,
+          type: 'ai',
+          content: '抱歉，网络连接失败，请检查网络后重试。\n\n如有紧急医疗问题，请直接联系：\n• 急救电话：120\n• 医院急诊科',
+          timestamp: new Date().toLocaleTimeString(),
+          error: true
+        };
+        
+        const messages = [...this.data.messages, errorMessage];
+        this.setData({
+          messages: messages
+        });
+        
+        this.scrollToBottom();
+        
+        wx.showToast({
+          title: '网络连接失败',
+          icon: 'error'
+        });
+      }
     });
-
-    // 滚动到底部
-    this.scrollToBottom();
   },
 
   // 滚动到底部
@@ -182,6 +331,13 @@ Page({
       this.setData({
         scrollIntoView: lastMessageId
       });
+      
+      // 添加延迟确保滚动完全生效，特别是AI回复后
+      setTimeout(() => {
+        this.setData({
+          scrollIntoView: lastMessageId
+        });
+      }, 100);
     }
   },
 
@@ -206,85 +362,178 @@ Page({
 
   // 开启新聊天
   startNewChat() {
-    wx.showModal({
-      title: '开启新聊天',
-      content: '确定要开启新的聊天对话吗？当前对话将被保存到历史记录中。',
-      success: (res) => {
-        if (res.confirm) {
-          // 保存当前聊天到历史记录
-          this.saveCurrentChat();
-          
-          // 清空当前消息
-          this.setData({
-            messages: [],
-            currentChatId: null
-          });
-          
-          wx.showToast({
-            title: '新聊天已开启',
-            icon: 'success',
-            duration: 1500
-          });
-        }
-      }
-    });
-  },
-
-  // 保存当前聊天
-  saveCurrentChat() {
-    if (this.data.messages.length === 0) {
-      return;
-    }
-
-    const chatTitle = this.generateChatTitle();
-    const chatData = {
-      id: Date.now(),
-      title: chatTitle,
-      time: new Date().toLocaleString(),
-      messages: this.data.messages
-    };
-
-    const historyChats = [...this.data.historyChats, chatData];
-    
+    // 直接清空当前聊天，开启新对话
     this.setData({
-      historyChats: historyChats
+      messages: [],
+      currentChatId: null,
+      showHistoryModal: false
     });
-
-    // 保存到本地存储
-    wx.setStorageSync('chatHistory', historyChats);
-  },
-
-  // 生成聊天标题
-  generateChatTitle() {
-    const messages = this.data.messages;
-    if (messages.length > 0) {
-      const firstUserMessage = messages.find(msg => msg.type === 'user');
-      if (firstUserMessage) {
-        return firstUserMessage.content.length > 10 
-          ? firstUserMessage.content.substring(0, 10) + '...'
-          : firstUserMessage.content;
-      }
-    }
-    return `聊天记录 ${new Date().toLocaleDateString()}`;
+    
+    // 显示欢迎消息
+    this.showWelcomeMessage();
+    
+    wx.showToast({
+      title: '新聊天已开启',
+      icon: 'success',
+      duration: 1500
+    });
   },
 
   // 加载历史聊天
   loadHistoryChat(e) {
     const chatId = e.currentTarget.dataset.id;
-    const historyChat = this.data.historyChats.find(chat => chat.id === chatId);
+    const token = wx.getStorageSync('token');
     
-    if (historyChat) {
-      this.setData({
-        messages: historyChat.messages,
-        currentChatId: chatId,
-        showHistoryModal: false
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'error'
       });
-      
-      // 滚动到底部
-      setTimeout(() => {
-        this.scrollToBottom();
-      }, 100);
+      return;
     }
+    
+    console.log('=== 加载历史聊天调试信息 ===');
+    console.log('聊天ID:', chatId);
+    
+    wx.showLoading({
+      title: '加载中...'
+    });
+    
+    const baseUrl = getApp().globalData.baseUrl;
+    
+    wx.request({
+      url: `${baseUrl}/chat/sessions/${chatId}/messages`,
+      method: 'GET',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
+      },
+      success: (res) => {
+        console.log('加载历史聊天响应:', res);
+        wx.hideLoading();
+        
+        if (res.data.success) {
+          // 转换消息格式
+          const messages = res.data.messages.map(msg => ({
+            id: `${msg.type}_${msg.id}`,
+            type: msg.type,
+            content: msg.content,
+            timestamp: msg.timeDisplay
+          }));
+          
+          this.setData({
+            messages: messages,
+            currentChatId: chatId,
+            showHistoryModal: false
+          });
+          
+          // 滚动到底部
+          setTimeout(() => {
+            this.scrollToBottom();
+          }, 100);
+          
+          wx.showToast({
+            title: '历史聊天加载成功',
+            icon: 'success',
+            duration: 1500
+          });
+        } else {
+          wx.showToast({
+            title: res.data.message || '加载失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('加载历史聊天失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
+      }
+    });
+  },
+
+  // 删除历史聊天
+  deleteHistoryChat(e) {
+    const chatId = e.currentTarget.dataset.id;
+    const token = wx.getStorageSync('token');
+    
+    if (!token) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'error'
+      });
+      return;
+    }
+    
+    wx.showModal({
+      title: '确认删除',
+      content: '删除后无法恢复，确定要删除这个聊天记录吗？',
+      confirmText: '删除',
+      cancelText: '取消',
+      confirmColor: '#f44336',
+      success: (res) => {
+        if (res.confirm) {
+          this.performDeleteChat(chatId);
+        }
+      }
+    });
+  },
+
+  // 执行删除聊天
+  performDeleteChat(chatId) {
+    const token = wx.getStorageSync('token');
+    const baseUrl = getApp().globalData.baseUrl;
+    
+    wx.showLoading({
+      title: '删除中...'
+    });
+    
+    wx.request({
+      url: `${baseUrl}/chat/sessions/${chatId}`,
+      method: 'DELETE',
+      header: {
+        'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
+      },
+      success: (res) => {
+        wx.hideLoading();
+        
+        if (res.data.success) {
+          // 重新加载聊天会话列表
+          this.loadChatSessions();
+          
+          // 如果删除的是当前聊天，清空消息
+          if (this.data.currentChatId === chatId) {
+            this.setData({
+              messages: [],
+              currentChatId: null
+            });
+            this.showWelcomeMessage();
+          }
+          
+          wx.showToast({
+            title: '删除成功',
+            icon: 'success'
+          });
+        } else {
+          wx.showToast({
+            title: res.data.message || '删除失败',
+            icon: 'error'
+          });
+        }
+      },
+      fail: (err) => {
+        console.error('删除聊天失败:', err);
+        wx.hideLoading();
+        wx.showToast({
+          title: '网络错误',
+          icon: 'error'
+        });
+      }
+    });
   },
 
 

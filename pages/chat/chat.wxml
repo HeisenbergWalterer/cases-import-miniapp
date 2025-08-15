@@ -13,8 +13,6 @@
 
   <!-- 聊天内容区域 -->
   <scroll-view class="chat-content" scroll-y="true" scroll-top="{{scrollTop}}" scroll-into-view="{{scrollIntoView}}">
-
-
     <!-- 聊天消息列表 -->
     <view class="message-list">
       <view class="message-item" wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}">
@@ -23,8 +21,13 @@
           <view class="avatar ai-avatar">
             <image class="avatar-image" src="/images/icon/deepseek.png" mode="aspectFill"></image>
           </view>
-          <view class="message-bubble ai-bubble">
+          <view class="message-bubble ai-bubble {{item.error ? 'error-bubble' : ''}} {{item.fallback ? 'fallback-bubble' : ''}}">
             <text class="message-text">{{item.content}}</text>
+            <view class="message-time">{{item.timestamp}}</view>
+            <!-- 错误或降级提示 -->
+            <view class="message-status" wx:if="{{item.error || item.fallback}}">
+              <text class="status-text">{{item.error ? '⚠️ 连接错误' : '⚠️ AI服务异常'}}</text>
+            </view>
           </view>
         </view>
         
@@ -32,22 +35,28 @@
         <view class="message user-message" wx:else>
           <view class="message-bubble user-bubble">
             <text class="message-text">{{item.content}}</text>
+            <view class="message-time">{{item.timestamp}}</view>
           </view>
           <view class="avatar user-avatar">
             <image class="avatar-image" src="/images/icon/用户.png" mode="aspectFill"></image>
           </view>
         </view>
       </view>
-    </view>
-
-    <!-- 初始AI问候 -->
-    <view class="message-item" wx:if="{{messages.length === 0}}">
-      <view class="message ai-message">
-        <view class="avatar ai-avatar">
-          <image class="avatar-image" src="/images/icon/deepseek.png" mode="aspectFill"></image>
-        </view>
-        <view class="message-bubble ai-bubble">
-          <text class="message-text">你好</text>
+      
+      <!-- AI正在输入提示 -->
+      <view class="message-item" wx:if="{{isAITyping}}">
+        <view class="message ai-message">
+          <view class="avatar ai-avatar">
+            <image class="avatar-image" src="/images/icon/deepseek.png" mode="aspectFill"></image>
+          </view>
+          <view class="message-bubble ai-bubble typing-bubble">
+            <view class="typing-indicator">
+              <view class="typing-dot"></view>
+              <view class="typing-dot"></view>
+              <view class="typing-dot"></view>
+            </view>
+            <text class="typing-text">AI正在思考，请耐心等待（可能需要30-60秒）...</text>
+          </view>
         </view>
       </view>
     </view>
@@ -65,9 +74,13 @@
                bindconfirm="sendMessage"
                adjust-position="{{true}}"
                bindfocus="onInputFocus"
-               bindblur="onInputBlur" />
-        <view class="send-btn {{inputMessage ? '' : 'disabled'}}" bindtap="sendMessage">
-          <text class="send-text">发送</text>
+               bindblur="onInputBlur"
+               disabled="{{isLoading}}" />
+        <view class="send-btn {{inputMessage && !isLoading ? '' : 'disabled'}}" bindtap="sendMessage">
+          <view wx:if="{{isLoading}}" class="loading-icon">
+            <view class="loading-spinner"></view>
+          </view>
+          <text class="send-text" wx:else>发送</text>
         </view>
       </view>
     </view>
@@ -81,9 +94,16 @@
         <view class="modal-close" bindtap="hideHistoryDialog">×</view>
       </view>
       <view class="history-list">
-        <view class="history-item" wx:for="{{historyChats}}" wx:key="id" bindtap="loadHistoryChat" data-id="{{item.id}}">
-          <view class="history-title">{{item.title}}</view>
-          <view class="history-time">{{item.time}}</view>
+        <view class="history-item" wx:for="{{historyChats}}" wx:key="id">
+          <view class="history-content" bindtap="loadHistoryChat" data-id="{{item.id}}">
+            <view class="history-title">{{item.title}}</view>
+            <view class="history-time">{{item.timeDisplay}}</view>
+          </view>
+          <view class="history-actions">
+            <view class="delete-btn" bindtap="deleteHistoryChat" data-id="{{item.id}}">
+              <text class="delete-text">删除</text>
+            </view>
+          </view>
         </view>
         <view class="empty-history" wx:if="{{historyChats.length === 0}}">
           <text>暂无历史对话</text>
